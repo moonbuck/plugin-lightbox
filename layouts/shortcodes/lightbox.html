@@ -1,0 +1,37 @@
+{{- if (.Get "src") -}}
+{{- $src := .Get "src" -}}
+<a
+  href="{{ .Get "href" | default $src }}"
+  class="glightbox{{- with .Get "link-class" }} {{ . }}{{ end }}"
+  {{- with .Get "link-style" }}style="{{ . }}"{{ end }}
+  {{- with .Get "gallery" }}data-gallery="{{ . }}"{{ end }}
+  {{- with .Get "title" }}data-title="{{ . }}"{{ end }}
+  {{- with .Get "description" }}data-description="{{ . }}"{{ end }}
+  {{- with .Get "desc-position" }}data-desc-position="{{ . }}"{{ end }}
+  {{- with .Get "type" }}data-type="{{ . }}"{{ end }}
+  {{- with .Get "effect" }}data-effect="{{ . }}"{{ end }}
+  {{- with .Get "width" }}data-width="{{ . }}"{{ end }}
+  {{- with .Get "height" }}data-height="{{ . }}"{{ end }}
+  {{- with .Get "zoomable" }}data-zoomable="{{ . }}"{{ end }}
+  {{- with .Get "draggable" }}data-draggable="{{ . }}"{{ end }}
+  {{- with .Get "sizes" }}data-sizes="{{ . }}"{{ end }}
+  {{- with .Get "srcset" }}data-srcset="{{ . }}"{{ end }}
+  >
+  <img
+    {{- with .Get "img-width" }}
+    src="https://micro.blog/photos/{{ . }}x/{{ $src }}"
+    {{- else }}
+    src="{{ $src }}"
+    {{- end }}
+    {{- with .Get "alt" }}alt="{{ . }}"{{ end }}
+    {{- with .Get "img-class" }}class="{{ . }}"{{ end }}
+    {{- with .Get "img-style" }}
+    style="{{ . }}"
+    {{- else -}}
+    {{- with .Get "img-width" }}
+    style="width: {{ . }}px; height: auto; max-width: 100%"
+    {{- end -}}
+    {{- end }}
+  />  
+</a>
+{{- end -}}

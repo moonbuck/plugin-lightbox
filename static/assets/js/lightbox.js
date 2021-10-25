@@ -4,4 +4,3 @@ const lightbox = GLightbox({
     keyboardNavigation: true,
     closeButton: true
 });
-alert("lightbox loaded from assets/js bitches!");

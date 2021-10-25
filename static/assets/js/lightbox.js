@@ -28,3 +28,25 @@ const lightbox = GLightbox({
   lightboxHTML: customLightboxHTML,
   slideHTML: customSlideHTML
 });
+
+lightbox.on('open', () => {
+  // Do something
+});
+
+lightbox.on('close', () => {
+  // Do something
+});
+
+lightbox.on('slide_changed', ({ prev, current }) => {
+  
+  // Prev and current are objects that contain the following data
+  const { slideIndex, slideNode, slideConfig, player, trigger } = current;
+
+  // slideIndex - the slide index
+  // slideNode - the node you can modify
+  // slideConfig - will contain the configuration of the slide like title, description, etc.
+  // player - the slide player if it exists otherwise will return false
+  // trigger - this will contain the element that triggers this slide, this can be a link, a button, etc in your HTML, it can be null
+
+  
+});

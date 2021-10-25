@@ -26,7 +26,5 @@ let customSlideHTML = `<div class="gslide">
     
 const lightbox = GLightbox({
   lightboxHTML: customLightboxHTML,
-  slideHTML: customSlideHTML,
-  width: '90%',
-  height: '90%'
+  slideHTML: customSlideHTML
 });

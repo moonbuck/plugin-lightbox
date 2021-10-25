@@ -1,0 +1,37 @@
+{{- if .src -}}
+{{- $src := .src -}}
+<a
+  href="{{ .href | default $src }}"
+  class="glightbox{{- with .link_class }} {{ . }}{{ end }}"
+  {{- with link_style }}style="{{ . }}"{{ end }}
+  {{- with .gallery }}data-gallery="{{ . }}"{{ end }}
+  {{- with .title }}data-title="{{ . }}"{{ end }}
+  {{- with .description }}data-description="{{ . }}"{{ end }}
+  {{- with .desc_position }}data-desc-position="{{ . }}"{{ end }}
+  {{- with .type }}data-type="{{ . }}"{{ end }}
+  {{- with .effect }}data-effect="{{ . }}"{{ end }}
+  {{- with .width }}data-width="{{ . }}"{{ end }}
+  {{- with .height }}data-height="{{ . }}"{{ end }}
+  {{- with .zoomable }}data-zoomable="{{ . }}"{{ end }}
+  {{- with .draggable }}data-draggable="{{ . }}"{{ end }}
+  {{- with .sizes }}data-sizes="{{ . }}"{{ end }}
+  {{- with .srcset }}data-srcset="{{ . }}"{{ end }}
+  >
+  <img
+    {{- with .img_width }}
+    src="https://micro.blog/photos/{{ . }}x/{{ $src }}"
+    {{- else }}
+    src="{{ $src }}"
+    {{- end }}
+    {{- with .alt }}alt="{{ . }}"{{ end }}
+    {{- with .img-class }}class="{{ . }}"{{ end }}
+    {{- with .img-style }}
+    style="{{ . }}"
+    {{- else -}}
+    {{- with .img-width }}
+    style="width: {{ . }}px; height: auto; max-width: 100%"
+    {{- end -}}
+    {{- end }}
+  />  
+</a>
+{{- end -}}

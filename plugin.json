@@ -5,6 +5,7 @@
     "includes": [
         "/glightbox.min.css",
         "/glightbox.min.js",
-        "/lightbox.js"
+        "/lightbox.js",
+        "/assets/js/lightbox.js"
       ]
   }

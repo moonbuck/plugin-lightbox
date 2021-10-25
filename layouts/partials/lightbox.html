@@ -3,7 +3,7 @@
 <a
   href="{{ .href | default $src }}"
   class="glightbox{{- with .link_class }} {{ . }}{{ end }}"
-  {{- with link_style }}style="{{ . }}"{{ end }}
+  {{- with .link_style }}style="{{ printf "%q" . | safeHTMLAttr }}"{{ end }}
   {{- with .gallery }}data-gallery="{{ . }}"{{ end }}
   {{- with .title }}data-title="{{ . }}"{{ end }}
   {{- with .description }}data-description="{{ . }}"{{ end }}
@@ -24,11 +24,11 @@
     src="{{ $src }}"
     {{- end }}
     {{- with .alt }}alt="{{ . }}"{{ end }}
-    {{- with .img-class }}class="{{ . }}"{{ end }}
-    {{- with .img-style }}
-    style="{{ . }}"
+    {{- with .img_class }}class="{{ . }}"{{ end }}
+    {{- with .img_style }}
+    style="{{ printf "%q" . | safeHTMLAttr }}"
     {{- else -}}
-    {{- with .img-width }}
+    {{- with .img_width }}
     style="width: {{ . }}px; height: auto; max-width: 100%"
     {{- end -}}
     {{- end }}

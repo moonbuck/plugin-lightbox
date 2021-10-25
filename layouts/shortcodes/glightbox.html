@@ -1,22 +1,3 @@
-{{/* Unmodifed shortcode from https://github.com/jsonbecker/plugin-glightbox */}}
-<a href="{{ .Get "src" }}" 
-   class="glightbox"
-   {{ if .Get "gallery"}}
-     data-gallery="{{ .Get "gallery" }}"
-   {{ end }}
-   {{ if or (.Get "title") (.Get "description") }}
-     data-glightbox="title:{{ .Get "title" | default "" }};description:{{ .Get "description" | default "" }}"
-   {{end}}
->
-<img {{ if .Get "gallery"}} 
-        src = "https://micro.blog/photos/260x/{{ .Get "src" }}" style="width: 260px; height: auto; max-width: 100%"
-     {{ else }}
-        src = "{{ .Get "src" }}" style="max-width: 100%"
-     {{ end }}
-     {{ if .Get "alt" }}
-        alt="{{ .Get "alt" }}" 
-     {{ end }}
-     {{ if .Get "title" }}
-        title={{ .Get "title" }} 
-     {{ end }} />
-     </a>
+{{- if (.Get "src") -}}
+{{ partial "lightbox.html" (dict "src" (.Get "src") "img_width" (.Get "img-width" | default "260") "gallery" (.Get "gallery") "title" (.Get "title") "description" (.Get "description") "alt" (.Get "alt")) }}
+{{- end -}}

@@ -31,6 +31,9 @@
 {{ $video_class := "gallery-video" }}
 {{ with .video_class }}{{ $video_class = printf "%s %s" $video_class . }}{{ end }}
 {{ $photo_width := .photo_width }}
+{{ $link_style := .link_style }}
+{{ $img_style := .img_style }}
+{{ $video_style := .video_style }}
 
 {{/* Output the opening div tag with the generated attributes */}}
 <div class="{{ $div_class }}" style="{{ $div_style | safeCSS }}">
@@ -48,7 +51,7 @@
 {{ $slide_height := index $slide $height_key }}
 
 {{/* Invoke the lightbox partial to generate the slide */}}
-{{ partial "lightbox.html" (dict "src" $src "thumb_src" $thumb_src "title" $title "description" $description "desc_position" $desc_position "width" $slide_width "height" $slide_height "gallery" $gallery "link_class" $link_class "img_class" $img_class "video_class" $video_class "photo_width" $photo_width) }}
+{{ partial "lightbox.html" (dict "src" $src "thumb_src" $thumb_src "title" $title "description" $description "desc_position" $desc_position "width" $slide_width "height" $slide_height "gallery" $gallery "link_class" $link_class "link_style" $link_style "img_class" $img_class "img_style" $img_style "video_class" $video_class "video_style" $video_style "photo_width" $photo_width) }}
 
 {{/* Close range */}}
 {{ end }}

@@ -17,8 +17,12 @@
   {{- with .sizes }}data-sizes="{{ . }}"{{ end }}
   {{- with .srcset }}data-srcset="{{ . }}"{{ end }}
   > 
-  {{- if and (in (slice "mp4" "mov" "webm" "ogg") (path.Ext $src)) (not (isset . "href")) -}}
-  
+  {{- if and (in (slice ".mp4" ".mov" ".webm" ".ogg") (path.Ext $src)) (not (isset . "href")) -}}
+  <video playsinline autoplay muted loop
+    src="{{ $src }}"
+    {{- with .video_class }}class="{{ . }}"{{ end }}
+    {{- with .video_style }}style="{{ . | safeCSS }}"{{ end -}}
+    ></video>
   {{- else -}}
   <img
     {{- with .photo_width }}

@@ -1,62 +1,62 @@
 {{/* Check we have what we need to start */}}
-{{- if and (.Get "gallery") (.Get "slide-data") -}}
+{{ if (and (.Get "gallery") (.Get "slide-data")) }}
 
 {{/* Capture the known parameters */}}
-{{- $gallery := .Get "gallery" -}}
-{{- $slide_data := .Get "slide-data" -}}
+{{ $gallery := .Get "gallery" }}
+{{ $slide_data := .Get "slide-data" }}
 
 {{/* Establish key values for the slide data */}}
-{{- $title_key := .Get "title-key" | default "title" -}}
-{{- $desc_key := .Get "desc-key" | default "description" -}}
-{{- $src_key := .Get "src-key" | default "src"  -}}
-{{- $width_key := .Get "width-key" | default "width"  -}}
-{{- $height_key := .Get "height-key" | default "height"  -}}
-{{- $thumb_src_key := .Get "thumb-src-key" | default "thumb" -}}
-{{- $desc_position_key := .Get "desc-position-key" | default "desc-position" -}}
+{{ $title_key := .Get "title-key" | default "title" }}
+{{ $desc_key := .Get "desc-key" | default "description" }}
+{{ $src_key := .Get "src-key" | default "src"  }}
+{{ $width_key := .Get "width-key" | default "width"  }}
+{{ $height_key := .Get "height-key" | default "height"  }}
+{{ $thumb_src_key := .Get "thumb-src-key" | default "thumb" }}
+{{ $desc_position_key := .Get "desc-position-key" | default "desc-position" }}
 
 {{/* Generate the style and class attributes for the div */}}
-{{- $flex_wrap := .Get "flex-wrap" | default "wrap" -}}
-{{- $div_style := printf "display: flex; flex-wrap: %s;" $flex_wrap -}}
-{{- $div_class := printf "gallery %s" $gallery -}}
-{{- with .Get "div-class" -}}
-{{- $div_class = printf "%s %s" $div_class . -}}
-{{- end -}}
+{{ $flex_wrap := .Get "flex-wrap" | default "wrap" }}
+{{ $div_style := printf "display: flex; flex-wrap: %s;" $flex_wrap }}
+{{ $div_class := printf "gallery %s" $gallery }}
+{{ with .Get "div-class" }}
+{{ $div_class = printf "%s %s" $div_class . }}
+{{ end }}
 
 {{/* Capture optional parameter values shared by all slides */}}
-{{- $link_class := "gallery-link" -}}
-{{- with .Get "link-class" -}}
-{{- $link_class = printf "%s %s" $link_class . -}}
-{{- end -}}
-{{- $img_class := "gallery-image" -}}
-{{- with .Get "img-class" -}}
-{{- $img_class = printf "%s %s" $img_class . -}}
-{{- end -}}
-{{- $video_class := "gallery-video" -}}
-{{- with .Get "video-class" -}}
-{{- $video_class = printf "%s %s" $video_class . -}}
-{{- end -}}
-{{- $photo_width := .Get "photo-width" -}}
+{{ $link_class := "gallery-link" }}
+{{ with .Get "link-class" }}
+{{ $link_class = printf "%s %s" $link_class . }}
+{{ end }}
+{{ $img_class := "gallery-image" }}
+{{ with .Get "img-class" }}
+{{ $img_class = printf "%s %s" $img_class . }}
+{{ end }}
+{{ $video_class := "gallery-video" }}
+{{ with .Get "video-class" }}
+{{ $video_class = printf "%s %s" $video_class . }}
+{{ end }}
+{{ $photo_width := .Get "photo-width" }}
 
 {{/* Output the opening div tag with the generated attributes */}}
 <div class="{{ $div_class }}" style="{{ $div_style }}">
 
 {{/* Iterate over the individual slides */}}
-{{- range $slide := $slide_data -}}
+{{ range $slide := $slide_data }}
 {{/* Retrieve slide values */}}
-{{- $src := index $slide $src_key -}}
-{{- $thumb_src := index $slide $thumb_src_key -}}
-{{- $title := index $slide $title_key -}}
-{{- $description := index $slide $desc_key -}}
-{{- $desc_position := index $slide $desc_position_key -}}
-{{- $slide_width := index $slide $width_key -}}
-{{- $slide_height := index $slide $height_key -}}
+{{ $src := index $slide $src_key }}
+{{ $thumb_src := index $slide $thumb_src_key }}
+{{ $title := index $slide $title_key }}
+{{ $description := index $slide $desc_key }}
+{{ $desc_position := index $slide $desc_position_key }}
+{{ $slide_width := index $slide $width_key }}
+{{ $slide_height := index $slide $height_key }}
 
 {{/* Invoke the lightbox partial to generate the slide */}}
-{{ partial "lightbox.html" (dict "src" $src "thumb_src" $thumb_src "title" $title "description" $description "desc_position" $desc_position "width" $slide_width "height" $slide_height "gallery" $gallery "link_class" $link_class "img_class" $image_class "video_class" $video_class "photo_width" $photo_width) }}
+{{ partial "lightbox.html" (dict "src" $src "thumb_src" $thumb_src "title" $title "description" $description "desc_position" $desc_position "width" $slide_width "height" $slide_height "gallery" $gallery "link_class" $link_class "img_class" $img_class "video_class" $video_class "photo_width" $photo_width) }}
 
 {{/* Close range */}}
-{{- end -}}
+{{ end }}
 </div>
 
 {{/* Close if */}}
-{{- end -}}
+{{ end }}

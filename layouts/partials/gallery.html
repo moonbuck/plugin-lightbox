@@ -17,6 +17,9 @@
 {{/* Generate the style and class attributes for the div */}}
 {{ $flex_wrap := .flex_wrap | default "wrap" }}
 {{ $div_style := printf "display: flex; flex-wrap: %s;" $flex_wrap }}
+{{ with .div_style }}
+{{ $div_style = printf "%s %s" $div_style . }}
+{{ end }}
 {{ $div_class := printf "gallery %s" $gallery }}
 {{ with .div_class }}{{ $div_class = printf "%s %s" $div_class . }}{{ end }}
 
@@ -30,7 +33,7 @@
 {{ $photo_width := .photo_width }}
 
 {{/* Output the opening div tag with the generated attributes */}}
-<div class="{{ $div_class }}" style="{{ $div_style }}">
+<div class="{{ $div_class }}" style="{{ $div_style | safeCSS }}">
 
 {{/* Iterate over the individual slides */}}
 {{ range $slide := $slide_data }}

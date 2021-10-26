@@ -30,23 +30,27 @@ const lightbox = GLightbox({
 });
 
 lightbox.on('open', () => {
-  // Do something
+  if (typeof dataLayer === 'undefined') { return; }
+  dataLayer.push({'event': 'lightbox_opened'});
 });
 
 lightbox.on('close', () => {
-  // Do something
+  if (typeof dataLayer === 'undefined') { return; }
+  dataLayer.push({'event': 'lightbox_closed'});
 });
 
 lightbox.on('slide_changed', ({ prev, current }) => {
   
+  if (typeof dataLayer === 'undefined') { return; }
+  
   // Prev and current are objects that contain the following data
-  const { slideIndex, slideNode, slideConfig, player, trigger } = current;
-
-  // slideIndex - the slide index
-  // slideNode - the node you can modify
-  // slideConfig - will contain the configuration of the slide like title, description, etc.
-  // player - the slide player if it exists otherwise will return false
-  // trigger - this will contain the element that triggers this slide, this can be a link, a button, etc in your HTML, it can be null
-
+  // const { slideIndex, slideNode, slideConfig, player, trigger } = current;
+  let event = 'lightbox_click';
+  let title = current.slideConfig.title;
+  let alt = current.slideConfig.alt;
+  let description = current.slideConfig.description;
+  let type = current.slideConfig.type;
+  
+  dataLayer.push({'event': event,'title': title,'art_piece':title,'alt': alt,'description': description,'type': type});
   
 });

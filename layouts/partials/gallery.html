@@ -15,10 +15,10 @@
 {{ $desc_position_key := .desc_position_key | default "desc-position" }}
 
 {{/* Generate the style and class attributes for the div */}}
-{{ $flex_wrap := .flex-wrap | default "wrap" }}
+{{ $flex_wrap := .flex_wrap | default "wrap" }}
 {{ $div_style := printf "display: flex; flex-wrap: %s;" $flex_wrap }}
 {{ $div_class := printf "gallery %s" $gallery }}
-{{ with .div-class }}{{ $div_class = printf "%s %s" $div_class . }}{{ end }}
+{{ with .div_class }}{{ $div_class = printf "%s %s" $div_class . }}{{ end }}
 
 {{/* Capture optional parameter values shared by all slides */}}
 {{ $link_class := "gallery-link" }}
@@ -27,16 +27,13 @@
 {{ with .img_class }}{{ $img_class = printf "%s %s" $img_class . }}{{ end }}
 {{ $video_class := "gallery-video" }}
 {{ with .video_class }}{{ $video_class = printf "%s %s" $video_class . }}{{ end }}
-{{ $photo_width := .photo-width }}
+{{ $photo_width := .photo_width }}
 
 {{/* Output the opening div tag with the generated attributes */}}
 <div class="{{ $div_class }}" style="{{ $div_style }}">
 
 {{/* Iterate over the individual slides */}}
 {{ range $slide := $slide_data }}
-
-{{/* Try unmarshalling if slide is not a map */}}
-{{ if not (reflect.IsMap $slide) }}{{ $slide = transform.Unmarshal $slide }}{{ end }}
 
 {{/* Retrieve slide values */}}
 {{ $src := index $slide $src_key }}

@@ -16,9 +16,12 @@
   {{- with .draggable }}data-draggable="{{ . }}"{{ end }}
   {{- with .sizes }}data-sizes="{{ . }}"{{ end }}
   {{- with .srcset }}data-srcset="{{ . }}"{{ end }}
-  >
+  > 
+  {{- if and (in (slice "mp4" "mov" "webm" "ogg") (path.Ext $src)) (not isset . "href") -}}
+  
+  {{- else -}}
   <img
-    {{- with .img_width }}
+    {{- with .photo_width }}
     src="https://micro.blog/photos/{{ . }}x/{{ $src }}"
     {{- else }}
     src="{{ $src }}"
@@ -28,10 +31,11 @@
     {{- with .img_style }}
     style="{{ printf "%q" . | safeHTMLAttr }}"
     {{- else -}}
-    {{- with .img_width }}
+    {{- with .photo_width }}
     style="width: {{ . }}px; height: auto; max-width: 100%"
     {{- end -}}
     {{- end }}
-  />  
+  />
+  {{- end -}}
 </a>
 {{- end -}}

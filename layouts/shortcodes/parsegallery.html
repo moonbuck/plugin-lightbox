@@ -8,6 +8,6 @@
     {{- $caption = index . 0 | replaceRE "[[]([^]]+)[]]" "$1"  | safeHTML -}}
   {{- end -}}
   {{- $src := index (findRE "http[^)]+" .) 0 -}}
-  {{ partial "lightbox.html" (dict "src" $src "gallery" $gallery "img_width" "260" "description" $caption) }}
+  {{ partial "lightbox.html" (dict "src" $src "gallery" $gallery "photo_width" "260" "description" $caption) }}
   {{- end -}}
 </div>

@@ -20,23 +20,30 @@
 {{ with .div_style }}
 {{ $div_style = printf "%s %s" $div_style . }}
 {{ end }}
-{{ $div_class := printf "gallery %s" $gallery }}
-{{ with .div_class }}{{ $div_class = printf "%s %s" $div_class . }}{{ end }}
+{{ $div_id := $gallery | anchorize }}
+{{ $div_class := "gallery" }}
+{{ with .div_class }}{{ $div_class = printf "%s %s" $div_class (. | anchorize) }}{{ end }}
 
 {{/* Capture optional parameter values shared by all slides */}}
 {{ $link_class := "gallery-link" }}
-{{ with .link_class }}{{ $link_class = printf "%s %s" $link_class . }}{{ end }}
+{{ with .link_class }}
+{{ $link_class = printf "%s %s" $link_class (. | anchorize) }}
+{{ end }}
 {{ $img_class := "gallery-image" }}
-{{ with .img_class }}{{ $img_class = printf "%s %s" $img_class . }}{{ end }}
+{{ with .img_class }}
+{{ $img_class = printf "%s %s" $img_class (. | anchorize) }}
+{{ end }}
 {{ $video_class := "gallery-video" }}
-{{ with .video_class }}{{ $video_class = printf "%s %s" $video_class . }}{{ end }}
+{{ with .video_class }}
+{{ $video_class = printf "%s %s" $video_class (. | anchorize) }}
+{{ end }}
 {{ $photo_width := .photo_width }}
 {{ $link_style := .link_style }}
 {{ $img_style := .img_style }}
 {{ $video_style := .video_style }}
 
 {{/* Output the opening div tag with the generated attributes */}}
-<div class="{{ $div_class }}" style="{{ $div_style | safeCSS }}">
+<div id="{{ $div_id }}" class="{{ $div_class }}" style="{{ $div_style | safeCSS }}">
 
 {{/* Iterate over the individual slides */}}
 {{ range $slide := $slide_data }}
@@ -50,8 +57,11 @@
 {{ $slide_width := index $slide $width_key }}
 {{ $slide_height := index $slide $height_key }}
 
+{{ $href := $src }}
+{{ if (and $src $thumb_src) }}{{ $src = $thumb_src }}{{ end }}
+
 {{/* Invoke the lightbox partial to generate the slide */}}
-{{ partial "lightbox.html" (dict "src" $src "thumb_src" $thumb_src "title" $title "description" $description "desc_position" $desc_position "width" $slide_width "height" $slide_height "gallery" $gallery "link_class" $link_class "link_style" $link_style "img_class" $img_class "img_style" $img_style "video_class" $video_class "video_style" $video_style "photo_width" $photo_width) }}
+{{ partial "lightbox.html" (dict "href" $href "src" $src "title" $title "description" $description "desc_position" $desc_position "width" $slide_width "height" $slide_height "gallery" $gallery "link_class" $link_class "link_style" $link_style "img_class" $img_class "img_style" $img_style "video_class" $video_class "video_style" $video_style "photo_width" $photo_width) }}
 
 {{/* Close range */}}
 {{ end }}

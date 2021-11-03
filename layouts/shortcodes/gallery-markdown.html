@@ -1,3 +1,53 @@
+{{/* 
+Parses slide data from markdown found in .Inner.
+
+When using positional parameters, the gallery name is required and will be the only parameter processed.
+
+When using named parameters the accepted values are equivalent to the gallery level parameters taken by `gallery.html`
+
+gallery data parameters:
+
+wrap: Whether the gallery links should wrap or be constrained to a single row. Default is true.
+
+div-class: Custom class to apply to the div. Default is undefined. 'gallery' is always applied.
+
+div-style: Custom style to apply to the div in additon to the flex declaration and wrap specification. Default is undefined.
+
+link-class: Custom class to apply to all anchor tags. Default is undefined. gallery-link and glightbox are always applied.
+
+link-style: Custom style to apply to all anchor tags. Default is undefined.
+
+gallery: The name of the gallery. This is required.
+
+desc_position: (bottom, top, left, right) Where all slides descriptions should be positioned. Default is bottom.
+
+effect: (zoom, fade, none) The animation effect all slide should use. Default is zoom.
+
+width: The custom width for all slides. Default is 900px.
+
+height: The custom height for all slides. Default is 506px.
+
+zoomable: Whether slides should be zoomable. Default is true.
+
+draggable: Whether slides should be draggable. Default is true.
+
+video_class: Custom class to apply to all video tags. Default is undefined. gallery-video is always applied.
+
+video_style: Custom style to apply to all video tags. Default is undefined.
+
+loop: Whether link videos should loop. Default is true.
+
+autoplay: Whether link videos should be set to autoplay. Default is true.
+
+preload: Value for link video preload attributes. This ignored when set to autoplay. Default is undefined.
+
+img_class: Custom class to apply to all img tags. Default is undefined. gallery-image is always applied.
+
+img_style: Custom style to apply to all img tags. Default is undefined.
+
+photo_width: Specifies a pixel width for a thumbnail image to be fetched using the https://micro.blog/photos/ API. Default is undefined.
+
+*/}}
 {{ $slide_data := false }}
 
 {{ with .Inner }}
@@ -22,12 +72,12 @@
   {{ if .IsNamedParams }}
   
   {{/* Pass through any named parameter values */}}
-  {{ partial "gallery.html" (dict "gallery" (.Get "gallery") "slide_data" $slide_data "flex_wrap" (.Get "flex-wrap") "div_style" (.Get "div-style") "div_class" (.Get "div-class") "link_class" (.Get "link-class") "link_style" (.Get "link-style") "img_class" (.Get "img-class") "img_style" (.Get "img-style") "video_class" (.Get "video-class") "video_style" (.Get "video-style") "photo_width" (.Get "photo-width")) }}
+  {{ partial "gallery.html" (dict "gallery" (.Get "gallery") "slide_data" $slide_data "wrap" (.Get "wrap") "div_style" (.Get "div-style") "div_class" (.Get "div-class") "link_class" (.Get "link-class") "link_style" (.Get "link-style") "img_class" (.Get "img-class") "img_style" (.Get "img-style") "video_class" (.Get "video-class") "video_style" (.Get "video-style") "photo_width" (.Get "photo-width") "desc_position" (.Get "desc-position") "effect" (.Get "effect") "zoomable" (.Get "zoomable") "draggable" (.Get "draggable") "loop" (.Get "loop") "autoplay" (.Get "autoplay") "preload" (.Get "preload") "width" (.Get "width") "height" (.Get "height")) }}
   
   {{ else }}
   
   {{/* Gallery name should be passed as first parameter */}}  
-  {{ partial "gallery.html" (dict "gallery" (.Get 0) "slide_data" $slide_data "flex_wrap" "nowrap") }}
+  {{ partial "gallery.html" (dict "gallery" (.Get 0) "slide_data" $slide_data "wrap" "nowrap") }}
   
   {{ end }}
 

@@ -1,7 +1,97 @@
+{{/*
+gallery data parameters:
+
+wrap: Whether the gallery links should wrap or be constrained to a single row. Default is true.
+
+div_class: Custom class to apply to the div. Default is undefined. 'gallery' is always applied.
+
+div_style: Custom style to apply to the div in additon to the flex declaration and wrap specification. Default is undefined.
+
+link_class: Custom class to apply to all anchor tags. Default is undefined. gallery-link and glightbox are always applied.
+
+link_style: Custom style to apply to all anchor tags. Default is undefined.
+
+gallery: The name of the gallery. This is required.
+
+desc_position: (bottom, top, left, right) Where all slides descriptions should be positioned. Default is bottom.
+
+effect: (zoom, fade, none) The animation effect all slide should use. Default is zoom.
+
+width: The custom width for all slides. Default is 900px.
+
+height: The custom height for all slides. Default is 506px.
+
+zoomable: Whether slides should be zoomable. Default is true.
+
+draggable: Whether slides should be draggable. Default is true.
+
+video_class: Custom class to apply to all video tags. Default is undefined. gallery-video is always applied.
+
+video_style: Custom style to apply to all video tags. Default is undefined.
+
+loop: Whether link videos should loop. Default is true.
+
+autoplay: Whether link videos should be set to autoplay. Default is true.
+
+preload: Value for link video preload attributes. This ignored when set to autoplay. Default is undefined.
+
+img_class: Custom class to apply to all img tags. Default is undefined. gallery-image is always applied.
+
+img_style: Custom style to apply to all img tags. Default is undefined.
+
+photo_width: Specifies a pixel width for a thumbnail image to be fetched using the https://micro.blog/photos/ API. Default is undefined.
+
+slide parameters:
+
+href: The URL for the slide content. This is required unless a src parameter value has been provided.
+
+src: The URL for the link content. This is required unless an href parameter value has been provided.
+
+link_style: Custom style to apply to the anchor tag. Default is undefined.
+
+gallery: The name of the slide's gallery. Default is undefined.
+
+title: The slide's title. Default is undefined.
+
+description: The slide's description. Default is undefined.
+
+desc_position: (bottom, top, left, right) Where the slide's description should be positioned. Default is bottom.
+
+type: (image, video, inline?, iframe?) The slide type. Default infers from source.
+
+effect: (zoom, fade, none) The animation effect the slide should use. Default is zoom.
+
+width: The custom width for this slide. Default is 900px.
+
+height: The custom height for this slide. Default is 506px.
+
+zoomable: Whether this slide should be zoomable. Default is true.
+
+draggable: Whether this slide should be draggable. Default is true.
+
+sizes: Specifies image sizes for different page layouts. Default is undefined.
+
+srcset: Specifies a list of image files to use in different situations. Default is undefined.
+
+video_style: Custom style to apply to the video tag. Default is undefined.
+
+loop: Whether the link video should loop. Default is true.
+
+autoplay: Whether the link video should be set to autoplay. Default is true.
+
+preload: Value for the link video's preload attribute. This ignored when set to autoplay. Default is undefined.
+
+alt: Specifies an alternate text for an image. Default is undefined.
+
+img_style: Custom style to apply to the img tag. Default is undefined.
+
+photo_width: Specifies a pixel width for a thumbnail image to be fetched using the https://micro.blog/photos/ API. Default is undefined.
+
+*/}}
+
 {{/* Check we have what we need to start */}}
 {{ if (and .gallery .slide_data) }}
 
-{{/* Capture the known parameters */}}
 {{ $gallery := .gallery }}
 {{ $slide_data := .slide_data }}
 
@@ -13,26 +103,15 @@
 
 {{ if ($slide_data | reflect.IsSlice) }}
 
-{{/* Establish key values for the slide data */}}
-{{ $title_key := .title_key | default "title" }}
-{{ $desc_key := .desc_key | default "description" }}
-{{ $src_key := .src_key | default "src"  }}
-{{ $width_key := .width_key | default "width"  }}
-{{ $height_key := .height_key | default "height"  }}
-{{ $thumb_src_key := .thumb_src_key | default "thumb" }}
-{{ $desc_position_key := .desc_position_key | default "desc-position" }}
-
 {{/* Generate the style and class attributes for the div */}}
-{{ $flex_wrap := .flex_wrap | default "wrap" }}
+{{ $flex_wrap := cond (eq .wrap "false") "nowrap" "wrap" }}
 {{ $div_style := printf "display: flex; flex-wrap: %s;" $flex_wrap }}
-{{ with .div_style }}
-{{ $div_style = printf "%s %s" $div_style . }}
-{{ end }}
+{{ with .div_style }}{{ $div_style = printf "%s %s" $div_style . }}{{ end }}
 {{ $div_id := $gallery | anchorize }}
 {{ $div_class := "gallery" }}
 {{ with .div_class }}{{ $div_class = printf "%s %s" $div_class (. | anchorize) }}{{ end }}
 
-{{/* Capture optional parameter values shared by all slides */}}
+{{/* Capture optional parameter values shared by all slides before context switches */}}
 {{ $link_class := "gallery-link" }}
 {{ with .link_class }}
 {{ $link_class = printf "%s %s" $link_class (. | anchorize) }}
@@ -49,27 +128,24 @@
 {{ $link_style := .link_style }}
 {{ $img_style := .img_style }}
 {{ $video_style := .video_style }}
+{{ $loop := .loop }}
+{{ $autoplay := .autoplay }}
+{{ $preload := .preload }}
+{{ $desc_position := .desc_position }}
+{{ $width := .width }}
+{{ $height := .height }}
+{{ $effect := .effect }}
+{{ $draggable := .draggable }}
+{{ $zoomable := .zoomable }}
 
 {{/* Output the opening div tag with the generated attributes */}}
 <div id="{{ $div_id }}" class="{{ $div_class }}" style="{{ $div_style | safeCSS }}">
 
 {{/* Iterate over the individual slides */}}
-{{ range $slide := $slide_data }}
-
-{{/* Retrieve slide values */}}
-{{ $src := index $slide $src_key }}
-{{ $thumb_src := index $slide $thumb_src_key }}
-{{ $title := index $slide $title_key }}
-{{ $description := index $slide $desc_key }}
-{{ $desc_position := index $slide $desc_position_key }}
-{{ $slide_width := index $slide $width_key }}
-{{ $slide_height := index $slide $height_key }}
-
-{{ $href := $src }}
-{{ if (and $src $thumb_src) }}{{ $src = $thumb_src }}{{ end }}
+{{ range $slide_data }}
 
 {{/* Invoke the lightbox partial to generate the slide */}}
-{{ partial "lightbox.html" (dict "href" $href "src" $src "title" $title "description" $description "desc_position" $desc_position "width" $slide_width "height" $slide_height "gallery" $gallery "link_class" $link_class "link_style" $link_style "img_class" $img_class "img_style" $img_style "video_class" $video_class "video_style" $video_style "photo_width" $photo_width) }}
+{{ partial "lightbox.html" (dict "href" (.href|default .src) "src" (.src|default .href) "title" .title "description" .description "desc_position" (.desc_position|default $desc_position) "width" (.width|default $width) "height" (.height|default $height) "gallery" $gallery "link_class" $link_class "link_style" (.link_style|default $link_style) "img_class" $img_class "img_style" (.img_style|default $img_style) "video_class" $video_class "video_style" (.video_style|default $video_style) "loop" (.loop|default $loop) "autoplay" (.autoplay|default $autoplay) "preload" (.preload|default $preload) "photo_width" (.photo_width|default $photo_width) "alt" .alt "effect" (.effect|default $effect) "draggable" (.draggable|default $draggable) "zoomable" (.zoomable|default $zoomable)) }}
 
 {{/* Close range */}}
 {{ end }}

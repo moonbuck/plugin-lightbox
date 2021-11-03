@@ -1,12 +1,15 @@
-# plugin-lightbox
+# plugin-lightbox (A README Experience)
 A plugin for [Micro.blog](https://micro.blog "Micro.blog") for presenting a slide carousel containing images and/or videos. It was inspired by Jason Becker’s [plugin](https://github.com/jsonbecker/plugin-glightbox) with which I’m sure you are already familiar.
 
 ![Slide](https://raw.githubusercontent.com/moonbuck/plugin-lightbox/main/slide.jpeg)
+
+## GLightbox Injection
 
 The [GLightbox](https://biati-digital.github.io/glightbox/ "GLightbox") Javascript and CSS Stylesheet have been bundled into the plugin. They may be found in their respective directories beneath `static/assets`.
 
 In the `static/assets/js/` directory you will also find `lightbox.js`, which is the script that creates your `GLightbox` object. There is still so much more parameterization possible with this plugin, perhaps starting with those custom HTML variable values.
 
+{{< language js >}}
 ```js
 const customLightboxHTML = `<div id="glightbox-body" class="glightbox-container">
     <div class="gloader visible"></div>
@@ -65,209 +68,208 @@ lightbox.on('slide_changed', ({ prev, current }) => {
   
 });
 ```
+{{< /language >}}
 
 You’ll notice that the lightbox open and close events, as well as slide change events, are monitored and various values pushed into `dataLayer`. I did this to make it available to myself for Google Tag Manager; but, you needn’t keep it. This is another possible point of parameterization.
 
 If you’re into customizing sh$t, you will want to check out the [glightbox README](https://github.com/biati-digital/glightbox#readme "Glightbox README"). It is full of useful things to know about using the framework.
 
-Speaking of shortcodes, the beast of burden here is definitely `layouts/partials/lightbox.html`. That’s right. I said ‘partial’. I wanted re-useable code … and I wanted it invokeable from within content markdown files as well as from theme templates. The solution was to create templates and include shortcodes that bounced it all over. The parameters for the shortcodes and partials mirror each other with shortcode parameter names being dash-cased and partial parameter names being underscore-cased.
+## Shortcodes (and Partials)
 
-So `layouts/shortcodes/lightbox.html` is all…
+When it comes to the included shortcodes, the beast of burden here is definitely `layouts/partials/lightbox.html`. That’s right. I said ***partial***. I wanted re-useable code … and I wanted it invokeable from within content markdown files as well as from theme templates. The solution was to create templates and include shortcodes that bounced it all over. The parameters for the shortcodes and partials mirror each other with shortcode parameter names being *dash-cased* and partial parameter names being *underscore\_cased*. Let’s have a look at the ridiculous collection of available parameters.
 
-```go
-{{- if (.Get "src") -}}
-{{ partial "lightbox.html" (dict "src" (.Get "src") "href" (.Get "href") "link_class" (.Get "link-class") "link_style" (.Get "link-style") "gallery" (.Get "gallery") "title" (.Get "title") "description" (.Get "description") "desc_position" (.Get "desc-position") "type" (.Get "type") "effect" (.Get "effect") "width" (.Get "width") "height" (.Get "height") "zoomable" (.Get "zoomable") "draggable" (.Get "draggable") "sizes" (.Get "sizes") "srcset" (.Get "srcset") "photo_width" (.Get "photo-width") "alt" (.Get "alt") "img_class" (.Get "img-class") "img_style" (.Get "img-style")) }}
-{{- end -}}
-```
+### `lightbox` Parameters
 
-and then `layouts/partials/lightbox.html` responds like…
+<dl>
+<dt>href</dt><dd>The URL for the slide content. This is required unless a <code>src</code> parameter value has been provided.</dd>
 
-```go
-{{- if .src -}}
-{{- $src := .src -}}
-<a
-  href="{{ .href | default $src }}"
-  class="glightbox{{- with .link_class }} {{ . }}{{ end }}"
-  {{- with .link_style }}style="{{ . | safeCSS }}"{{ end }}
-  {{- with .gallery }}data-gallery="{{ . }}"{{ end }}
-  {{- with .title }}data-title="{{ . }}"{{ end }}
-  {{- with .description }}data-description="{{ . }}"{{ end }}
-  {{- with .desc_position }}data-desc-position="{{ . }}"{{ end }}
-  {{- with .type }}data-type="{{ . }}"{{ end }}
-  {{- with .effect }}data-effect="{{ . }}"{{ end }}
-  {{- with .width }}data-width="{{ . }}"{{ end }}
-  {{- with .height }}data-height="{{ . }}"{{ end }}
-  {{- with .zoomable }}data-zoomable="{{ . }}"{{ end }}
-  {{- with .draggable }}data-draggable="{{ . }}"{{ end }}
-  {{- with .sizes }}data-sizes="{{ . }}"{{ end }}
-  {{- with .srcset }}data-srcset="{{ . }}"{{ end }}
-  > 
-  {{- if and (in (slice ".mp4" ".mov" ".webm" ".ogg") (path.Ext $src)) (not (isset . "href")) -}}
-  <video playsinline autoplay muted loop
-    src="{{ $src }}"
-    {{- with .video_class }}class="{{ . }}"{{ end }}
-    {{- with .video_style }}style="{{ . | safeCSS }}"{{ end -}}
-    ></video>
-  {{- else -}}
-  <img
-    {{- with .photo_width }}
-    src="https://micro.blog/photos/{{ . }}x/{{ $src }}"
-    {{- else }}
-    src="{{ $src }}"
-    {{- end }}
-    {{- with .alt }}alt="{{ . }}"{{ end }}
-    {{- with .img_class }}class="{{ . }}"{{ end }}
-    {{- with .img_style }}
-    style="{{ . | safeCSS }}"
-    {{- else -}}
-    {{- with .photo_width }}
-    style="width: {{ . }}px; height: auto; max-width: 100%"
-    {{- end -}}
-    {{- end }}
-  />
-  {{- end -}}
-</a>
-{{- end -}}
-```
+<dt>src</dt><dd>The URL for the link content. This is required unless an <code>href</code> parameter value has been provided.</dd>
 
-All parameters are named parameters.
+<dt>link-class / link_class</dt><dd>Custom class to apply to the anchor tag. Default is undefined. <code>glightbox</code> is always applied.</dd>
 
-The only required parameter value is `src`, which should point to the slide content.
+<dt>link-style / link_style</dt><dd>Custom style to apply to the anchor tag. Default is undefined.</dd>
 
-`href` is the link target to use when it is different then `src`. 
+<dt>gallery</dt><dd>The name of the slide's gallery. Default is undefined.</dd>
 
-`gallery`, `title`, `desc`, `desc-position`/`desc_position`, `type`, `effect`, `width`, `height`, `zoomable`, `draggable`, `sizes`, `srcset`, and `alt` are all passed directly through to the Javascript. For their descriptions, have a look at the [glightbox slide options](https://github.com/biati-digital/glightbox#slide-options "GLightbox Slide Options").
+<dt>title</dt><dd>The slide's title. Default is undefined.</dd>
 
-`link-class`/`link_class` is an optional parameter for setting the class on the `<a>` tag.
+<dt>description</dt><dd>The slide's description. Default is undefined.</dd>
 
-`link-style`/`link_style` is an optional parameter for styling the `<a>` tag.
+<dt>desc-postion / desc_position</dt><dd>(<code>bottom</code>, <code>top</code>, <code>left</code>, <code>right</code>) Where the slide's description should be positioned. Default is <code>bottom</code>.</dd>
 
-`video-class`/`video_class` is an optional parameter for setting the class on a `<video>` tag.
+<dt>type</dt><dd>(<code>image</code>, <code>video</code>, <code>inline</code>?, <code>iframe</code>?) The slide type. Default infers from source … and the last two options I'm not so sure about.</dd>
 
-`video-style`/`video_style` is an optional parameter for styling the `<video>` tag.
+<dt>effect</dt><dd>(<code>zoom</code>, <code>fade</code>, <code>none</code>) The animation effect the slide should use. Default is <code>zoom</code>.</dd>
 
-`img-class`/`img_class` is an optional parameter for setting the class on a `<img>` tag.
+<dt>width</dt><dd>The custom width for this slide. Default is <code>900px</code>.</dd>
 
-`img-style`/`img_style` is an optional parameter for styling the `<img>` tag.
+<dt>height</dt><dd>The custom height for this slide. Default is <code>506px</code>.</dd>
 
-`photo-width`/`photo_width` sets the pixel width requested via the `https://micro.blog/photos/` API which is fetched to serve as a thumbnail via the an `<img>` tag. This will be ignored if `img_style` has been set as setting this value also leads to corresponding style code to be generated.
+<dt>zoomable</dt><dd>Whether this slide should be zoomable. Default is <code>true</code>.</dd>
 
-And that’s all there is to it. Okay, it’s a lot Those of you already using Becker’s shortcode will be happy to know that I included a shortcode to mimic its behavior (I have a sh$t ton of posts that invoke his shortcode as well). It looks like this:
+<dt>draggable</dt><dd>Whether this slide should be draggable. Default is <code>true</code>.</dd>
 
-```go
-{{- if (.Get "src") -}}
-{{ partial "lightbox.html" (dict "src" (.Get "src") "photo_width" (.Get "img-width" | default "260") "gallery" (.Get "gallery") "title" (.Get "title") "description" (.Get "description") "alt" (.Get "alt")) }}
-{{- end -}}
-```
+<dt>sizes</dt><dd>Specifies image sizes for different page layouts. Default is undefined.</dd>
 
-So there’s your standalone lightbox.
+<dt>srcset</dt><dd>Specifies a list of image files to use in different situations. Default is undefined.</dd>
 
-What about your galleries? Well, the other plugin workhorse would be `layouts/partials/gallery.html`. You caught it. You know by now. I said ‘partial’. Whatever. Honestly, I thought I had a big bouncing gallery shortcode; but, I don’t. That will probably change. I do have some basic shortcodes that I probably left in there for old posts that make use of them. Let’s go over those.
+<dt>video-class / video_class</dt><dd>Custom class to apply to the video tag. Default is undefined.</dd>
 
-They are all gonna be paired shortcodes. Like most of my shortcodes, they were created to make [Ulysses](https://ulysses.app/ "Ulysses") more functional.
+<dt>video-style / video_style</dt><dd>Custom style to apply to the video tag. Default is undefined.</dd>
 
-The first one I created simply created a wrapper and made `gallery` available to nested shortcodes. It lives at `layouts/shortcodes/gallery.html` and looks like this:
+<dt>loop</dt><dd>Whether the link video should loop. Default is <code>true</code>.</dd>
 
-```go
-<div class="{{ .Get "gallery" }}" style="display: flex;">
-  {{ .Inner }}
-</div>
-```
+<dt>autoplay</dt><dd>Whether the link video should be set to autoplay. Default is <code>true</code>.</dd>
 
-That evolved into parsing the image markdown generated by Ulysses between the opening and closing tags. It lives at `layouts/shortcodes/gallery-markdown.html` and looks like this:
+<dt>preload</dt><dd>Value for the link video's preload attribute. This ignored when set to autoplay. Default is undefined.</dd>
 
-```go
-{{/* Gallery name should be passed as first parameter */}}
-{{- $gallery := .Get 0 -}}
-{{/* Create a flex box container for the images */}}
-<div 
-  class="gallery {{ $gallery }}"
-  style="display: flex;">
-{{/* Parse out markdown image declarations from `.Inner` and iterate */}}
-{{- $parsed_images := findRE "[!][[][^]]*[]][(][^)]+[)]" .Inner -}}
-{{- range $parsed_images -}}
-  {{/* Parse the image URL */}}
-  {{- $src := index (findRE "http[^)]+" .) 0 -}}
-  {{- $description := replaceRE "[!][[]([^]]*)[]].+" "$1" . }}
-  {{ partial "lightbox.html" (dict "src" $src "gallery" $gallery  "description" $description "link_class" "gallery-link" "img_class" "gallery-image") }}
-{{- end -}}
-</div>
-```
+<dt>alt</dt><dd>Specifies an alternate text for an image. Default is undefined.</dd>
 
-Say you’re in a Ulysses sheet, wanting to drop some sh$t in a gallery. You can be all…
+<dt>img-class / img_class</dt><dd>Custom class to apply to the img tag. Default is undefined.</dd>
 
-![](https://raw.githubusercontent.com/moonbuck/plugin-lightbox/main/from_ulysses.jpeg)
+<dt>img-style / img_style</dt><dd>Custom style to apply to the img tag. Default is undefined.</dd>
 
-The real gallery workhorse was designed for use from within a template (I created it for the gallery page I extracted out of my theme and into [this-plugin](https://github.com/moonbuck/plugin-gallery "plugin-gallery")). It lives at `layouts/partials/gallery.html` and it looks like this:
+<dt>photo-width / photo_width</dt><dd>Specifies a pixel width for a thumbnail image to be fetched using the <code>https://micro.blog/photos/</code> API. Default is undefined.</dd>
+</dl>
 
-```go
-{{/* Check we have what we need to start */}}
-{{ if (and .gallery .slide_data) }}
+### `gallery` Parameters
 
-{{/* Capture the known parameters */}}
-{{ $gallery := .gallery }}
-{{ $slide_data := .slide_data }}
+<dl>
+<dt>wrap</dt>
+<dd>Whether the gallery links should wrap or be constrained to a single row. Default is<code>true</code>.</dd>
 
-{{/* Establish key values for the slide data */}}
-{{ $title_key := .title_key | default "title" }}
-{{ $desc_key := .desc_key | default "description" }}
-{{ $src_key := .src_key | default "src"  }}
-{{ $width_key := .width_key | default "width"  }}
-{{ $height_key := .height_key | default "height"  }}
-{{ $thumb_src_key := .thumb_src_key | default "thumb" }}
-{{ $desc_position_key := .desc_position_key | default "desc-position" }}
+<dt>div-class / div_class</dt>
+<dd>Custom class to apply to the <code>div</code>. Default is<code>undefined</code>. 'gallery' is always applied.</dd>
 
-{{/* Generate the style and class attributes for the div */}}
-{{ $flex_wrap := .flex_wrap | default "wrap" }}
-{{ $div_style := printf "display: flex; flex-wrap: %s;" $flex_wrap }}
-{{ with .div_style }}
-{{ $div_style = printf "%s %s" $div_style . }}
-{{ end }}
-{{ $div_class := printf "gallery %s" $gallery }}
-{{ with .div_class }}{{ $div_class = printf "%s %s" $div_class . }}{{ end }}
+<dt>div-style / div_style</dt>
+<dd>Custom style to apply to the <code>div </code>in additon to the flex declaration and wrap specification. Default is<code>undefined</code>.</dd>
 
-{{/* Capture optional parameter values shared by all slides */}}
-{{ $link_class := "gallery-link" }}
-{{ with .link_class }}{{ $link_class = printf "%s %s" $link_class . }}{{ end }}
-{{ $img_class := "gallery-image" }}
-{{ with .img_class }}{{ $img_class = printf "%s %s" $img_class . }}{{ end }}
-{{ $video_class := "gallery-video" }}
-{{ with .video_class }}{{ $video_class = printf "%s %s" $video_class . }}{{ end }}
-{{ $photo_width := .photo_width }}
-{{ $link_style := .link_style }}
-{{ $img_style := .img_style }}
-{{ $video_style := .video_style }}
+<dt>link-class / link_class</dt>
+<dd>Custom class to apply to all anchor tags. Default is<code>undefined</code>. gallery-link and glightbox are always applied.</dd>
 
-{{/* Output the opening div tag with the generated attributes */}}
-<div class="{{ $div_class }}" style="{{ $div_style | safeCSS }}">
+<dt>link-style / link_style</dt>
+<dd>Custom style to apply to all anchor tags. Default is<code>undefined</code>.</dd>
 
-{{/* Iterate over the individual slides */}}
-{{ range $slide := $slide_data }}
+<dt>gallery</dt>
+<dd>The name of the gallery. This is required.</dd>
 
-{{/* Retrieve slide values */}}
-{{ $src := index $slide $src_key }}
-{{ $thumb_src := index $slide $thumb_src_key }}
-{{ $title := index $slide $title_key }}
-{{ $description := index $slide $desc_key }}
-{{ $desc_position := index $slide $desc_position_key }}
-{{ $slide_width := index $slide $width_key }}
-{{ $slide_height := index $slide $height_key }}
+<dt>desc-position / desc_position</dt>
+<dd>(<code>bottom</code>, <code>top</code>, <code>left</code>, <code>right</code>) Where all slides descriptions should be positioned. Default is <code>bottom</code>.</dd>
 
-{{/* Invoke the lightbox partial to generate the slide */}}
-{{ partial "lightbox.html" (dict "src" $src "thumb_src" $thumb_src "title" $title "description" $description "desc_position" $desc_position "width" $slide_width "height" $slide_height "gallery" $gallery "link_class" $link_class "link_style" $link_style "img_class" $img_class "img_style" $img_style "video_class" $video_class "video_style" $video_style "photo_width" $photo_width) }}
+<dt>effect</dt>
+<dd>(<code>zoom</code>, <code>fade</code>, <code>none</code>) The animation effect all slide should use. Default is <code>zoom</code>.</dd>
 
-{{/* Close range */}}
-{{ end }}
-</div>
+<dt>width</dt>
+<dd>The custom width for all slides. Default is <code>900px</code>.</dd>
 
-{{/* Close if */}}
-{{ end }}
-```
+<dt>height</dt>
+<dd>The custom height for all slides. Default is <code>506px</code>.</dd>
 
-It does some fancy stuff … but I will leave of describing this one for when I do the README for `plugin-gallery` (also, I’m in the middle of watching my Dawgs destroy them Gators). 
+<dt>zoomable</dt>
+<dd>Whether slides should be zoomable. Default is<code>true</code>.</dd>
+
+<dt>draggable</dt>
+<dd>Whether slides should be draggable. Default is<code>true</code>.</dd>
+
+<dt>video-class / video_class</dt>
+<dd>Custom class to apply to all <code>video</code> tags. Default is<code>undefined</code>. gallery-video is always applied.</dd>
+
+<dt>video-style / video_style</dt>
+<dd>Custom style to apply to all <code>video</code> tags. Default is<code>undefined</code>.</dd>
+
+<dt>loop</dt>
+<dd>Whether link videos should loop. Default is<code>true</code>.</dd>
+
+<dt>autoplay</dt>
+<dd>Whether link videos should be set to autoplay. Default is<code>true</code>.</dd>
+
+<dt>preload</dt>
+<dd>Value for link video <code>preload</code> attributes. This ignored when set to autoplay. Default is<code>undefined</code>.</dd>
+
+<dt>img-class / img_class</dt>
+<dd>Custom class to apply to all <code>img</code> tags. Default is<code>undefined</code>. gallery-image is always applied.</dd>
+
+<dt>img-style / img_style</dt>
+<dd>Custom style to apply to all <code>img</code> tags. Default is<code>undefined</code>.</dd>
+
+<dt>photo-width / photo_width</dt>
+<dd>Specifies a pixel width for a thumbnail image to be fetched using the <code>https://micro.blog/photos/</code> API. Default is<code>undefined</code>.</dd>
+
+<dt>slide-data / slide_data</dt>
+<dd>The <i>shortcode</i> parameter expects a string containing a JSON array of slide JSON objects. The JSON should use the underscore version of the keys as defined below. The <i>partial</i> parameter expects this same data but already unmarshalled into a valid <code>Slice</code>.</dd>
+<dl>
+<dt>href</dt>
+<dd>The URL for the slide content. This is required unless a <code>src</code> parameter value has been provided.</dd>
+
+<dt>src</dt>
+<dd>The URL for the link content. This is required unless an <code>href</code> parameter value has been provided.</dd>
+
+<dt>link_style</dt>
+<dd>Custom style to apply to the anchor tag. Default is <code>undefined</code>.</dd>
+
+<dt>gallery</dt>
+<dd>The name of the slide's gallery. Default is <code>undefined</code>.</dd>
+
+<dt>title</dt>
+<dd>The slide's title. Default is <code>undefined</code>.</dd>
+
+<dt>description</dt>
+<dd>The slide's description. Default is <code>undefined</code>.</dd>
+
+<dt>desc_position</dt>
+<dd>(<code>bottom</code>, <code>top</code>, <code>left</code>, <code>right</code>) Where the slide's description should be positioned. Default is <code>bottom</code>.</dd>
+
+<dt>type</dt>
+<dd>(<code>image</code>, <code>video</code>, <code>inline</code>?, <code>iframe</code>?) The slide type. Default infers from source … and the last two options I'm not sure about.</dd>
+
+<dt>effect</dt>
+<dd>(<code>zoom</code>, <code>fade</code>, <code>none</code>) The animation effect the slide should use. Default is <code>zoom</code>.</dd>
+
+<dt>width</dt>
+<dd>The custom width for this slide. Default is <code>900px</code>.</dd>
+
+<dt>height</dt>
+<dd>The custom height for this slide. Default is <code>506px</code>.</dd>
+
+<dt>zoomable</dt>
+<dd>Whether this slide should be zoomable. Default is <code>true</code>.</dd>
+
+<dt>draggable</dt>
+<dd>Whether this slide should be draggable. Default is <code>true</code>.</dd>
+
+<dt>sizes</dt>
+<dd>Specifies image sizes for different page layouts. Default is<code>undefined</code>.</dd>
+
+<dt>srcset</dt>
+<dd>Specifies a list of image files to use in different situations. Default is<code>undefined</code>.</dd>
+
+<dt>video_style</dt>
+<dd>Custom style to apply to the <code>video tag</code>. Default is<code>undefined</code>.</dd>
+
+<dt>loop</dt>
+<dd>Whether the link video should loop. Default is<code>true</code>.</dd>
+
+<dt>autoplay</dt>
+<dd>Whether the link video should be set to autoplay. Default is<code>true</code>.</dd>
+
+<dt>preload</dt>
+<dd>Value for the link video's <code>preload</code> attribute. This ignored when set to <code>autoplay</code>. Default is<code>undefined</code>.</dd>
+
+<dt>alt</dt>
+<dd>Specifies an alternate text for an image. Default is<code>undefined</code>.</dd>
+
+<dt>img_style</dt>
+<dd>Custom style to apply to the <code>img</code> tag. Default is<code>undefined</code>.</dd>
+
+<dt>photo_width</dt>
+<dd>Specifies a pixel width for a thumbnail image to be fetched using the <code>https://micro.blog/photos/</code> API. Default is<code>undefined</code>.</dd>
+</dl>
+</dl>
+
 
 In the `static/assets/css` directory you will also find `lightbox.css`, it holds the default styles used by the gallery partial.
 
+{{< language css >}}
 ```css
 a.gallery-link {
   height: 30vh;
@@ -286,3 +288,4 @@ video.gallery-image {
   vertical-align: bottom;
 }
 ```
+{{< /language >}}

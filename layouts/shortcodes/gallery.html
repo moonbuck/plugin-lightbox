@@ -45,7 +45,7 @@
 
 {{ end }}
 
-{{ partial "gallery.html" (dict "gallery" (.Get "gallery") "slide_data" (.Get "slide-data") "flex_wrap" (.Get "flex-wrap") "div_style" (.Get "div-style") "div_class" (.Get "div-class") "link_class" (.Get "link-class") "link_style" (.Get "link-style") "img_class" (.Get "img-class") "img_style" (.Get "img-style") "video_class" (.Get "video-class") "video_style" (.Get "video-style") "photo_width" (.Get "photo-width") "title_key" (.Get "title-key") "desc_key" (.Get "desc-key") "src_key" (.Get "src-key") "width_key" (.Get "width-key") "height_key" (.Get "height-key") "thumb_src_key" (.Get "thumb-src-key") "desc_position_key" (.Get "desc-position-key")) }}
+{{ partial "gallery.html" (dict "gallery" (.Get "gallery") "slide_data" $slide_data "flex_wrap" (.Get "flex-wrap") "div_style" (.Get "div-style") "div_class" (.Get "div-class") "link_class" (.Get "link-class") "link_style" (.Get "link-style") "img_class" (.Get "img-class") "img_style" (.Get "img-style") "video_class" (.Get "video-class") "video_style" (.Get "video-style") "photo_width" (.Get "photo-width") "title_key" (.Get "title-key") "desc_key" (.Get "desc-key") "src_key" (.Get "src-key") "width_key" (.Get "width-key") "height_key" (.Get "height-key") "thumb_src_key" (.Get "thumb-src-key") "desc_position_key" (.Get "desc-position-key")) }}
 
 {{ end }}
 {{ end }}

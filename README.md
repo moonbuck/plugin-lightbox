@@ -9,7 +9,6 @@ The [GLightbox](https://biati-digital.github.io/glightbox/ "GLightbox") Javascri
 
 In the `static/assets/js/` directory you will also find `lightbox.js`, which is the script that creates your `GLightbox` object. There is still so much more parameterization possible with this plugin, perhaps starting with those custom HTML variable values.
 
-{{< language js >}}
 ```js
 const customLightboxHTML = `<div id="glightbox-body" class="glightbox-container">
     <div class="gloader visible"></div>
@@ -68,7 +67,6 @@ lightbox.on('slide_changed', ({ prev, current }) => {
   
 });
 ```
-{{< /language >}}
 
 You’ll notice that the lightbox open and close events, as well as slide change events, are monitored and various values pushed into `dataLayer`. I did this to make it available to myself for Google Tag Manager; but, you needn’t keep it. This is another possible point of parameterization.
 
@@ -195,8 +193,14 @@ When it comes to the included shortcodes, the beast of burden here is definitely
 <dt>photo-width / photo_width</dt>
 <dd>Specifies a pixel width for a thumbnail image to be fetched using the <code>https://micro.blog/photos/</code> API. Default is<code>undefined</code>.</dd>
 
+<dt>scheme</dt>
+<dd>Shortcode-only parameter used to get around the autolinking when passing a string of JSON from the markdown file. This should be <code>https</code> or <code>http</code>.</dd>
+
+<dt>host</dt>
+<dd>Shortcode-only parameter used to get around the autolinking when passing a string of JSON from the markdown file. This should be <code>HOSTNAME</code></dd>
+
 <dt>slide-data / slide_data</dt>
-<dd>The <i>shortcode</i> parameter expects a string containing a JSON array of slide JSON objects. The JSON should use the underscore version of the keys as defined below. The <i>partial</i> parameter expects this same data but already unmarshalled into a valid <code>Slice</code>.</dd>
+<dd>The <i>shortcode</i> parameter expects a string containing a JSON array of slide JSON objects. The JSON should use the underscore version of the keys as defined below. When passing the JSON string to the shortcode, use relative URL values and provide <code>scheme</code> and <code>host</code> values as described above. The <i>partial</i> parameter expects this same data but already unmarshalled into a valid <code>Slice</code>.</dd>
 <dl>
 <dt>href</dt>
 <dd>The URL for the slide content. This is required unless a <code>src</code> parameter value has been provided.</dd>
@@ -266,10 +270,69 @@ When it comes to the included shortcodes, the beast of burden here is definitely
 </dl>
 </dl>
 
+### Okay, That’s A Lot
+Some of y’all will be relieved to discover that I also include a shortcode mimicing Becker’s `glightbox` shortcode. It takes the following parameters:
 
-In the `static/assets/css` directory you will also find `lightbox.css`, it holds the default styles used by the gallery partial.
+<dl>
+<dt>src</dt>
+<dd>An image URL for the slide. This is required.</dd>
 
-{{< language css >}}
+<dt>img-width</dt>
+<dd>Specifies a pixel width for a thumbnail image to be fetched using the <code>https://micro.blog/photos/</code> API. Default is<code>260px</code>.</dd>
+
+<dt>gallery</dt>
+<dd>The name of the slide's gallery. Default is <code>undefined</code></dd>
+
+<dt>title</dt>
+<dd>The slide's title. Default is <code>undefined</code>.</dd>
+
+<dt>description</dt>
+<dd>The slide's description. Default is <code>undefined</code>.</dd>
+
+<dt>alt</dt>
+<dd>Specifies an alternate text for an image. Default is<code>undefined</code>.</dd>
+</dl>
+
+### Okay, One More
+
+There is a special flavor of the `gallery` shortcode named `gallery-markdown`. It is identical to the `gallery` shortcode with the exception that you do not provide slide data as a parameter. It is used as a paired tag with inner content comprised of markdown images (such as one might find exported from [Ulysses](https://ulysses.app "Ulysses")). The caption and   src values are parsed from the markdown and used to create the slide objects.
+
+## Use Cases
+
+Say you’re in a Ulysses sheet and wanna drop some images in a gallery. You can be all:
+
+![From Ulysses](https://raw.githubusercontent.com/moonbuck/plugin-lightbox/main/from_ulysses.jpeg)
+
+and then the result will be all:
+
+![From Ulysses Result](https://raw.githubusercontent.com/moonbuck/plugin-lightbox/main/from_ulysses_result.jpeg) ![Cold Race War](https://raw.githubusercontent.com/moonbuck/plugin-lightbox/main/cold_race_war.jpeg)
+
+Or, you could be … that one other guy … that just thinks it’s cool to be able to stick this directly into your Micro.blog post: 
+```md
+{{< gallery gallery="chapterx" scheme="https" host="moondeer.blog" link-style="height:20vh;flex-grow:1;" slide-data="[{\"src\":\"/uploads/2021/4f0024c294.jpg\"}, {\"src\":\"/uploads/2021/b0e919de8a.jpg\"}, {\"src\":\"/uploads/2021/5f0e585195.jpg\"}, {\"src\":\"/uploads/2021/d98e67ac8e.jpg\"}, {\"src\":\"/uploads/2021/8d4a236a5a.jpg\"}, {\"src\":\"/uploads/2021/de2e42c518.jpg\"}, {\"src\":\"/uploads/2021/3f8d0ef051.webp\"}, {\"src\":\"/uploads/2021/6b85041015.webp\"}, {\"src\":\"/uploads/2021/e84db9a063.jpg\"}, {\"src\":\"/uploads/2021/13eb82ba44.jpg\"}, {\"src\":\"/uploads/2021/fd727a1100.jpg\"}, {\"src\":\"/uploads/2021/60d13dc85d.jpg\"}, {\"src\":\"/uploads/2021/b51786fa78.webp\"}, {\"src\":\"/uploads/2021/7cfe1fe6b5.jpg\"}, {\"src\":\"/uploads/2021/60d07419f4.jpg\"}, {\"src\":\"/uploads/2021/ffe769b968.jpg\"}, {\"src\":\"/uploads/2021/730a50d6e2.jpg\"}, {\"src\":\"/uploads/2021/8578f0bc1b.jpg\"}, {\"src\":\"/uploads/2021/b6c5ee9c33.jpg\"}, {\"src\":\"/uploads/2021/d7cde010f4.jpg\"}, {\"src\":\"/uploads/2021/da5caedfd4.jpg\"}, {\"src\":\"/uploads/2021/d99c28d3f2.jpg\"}]" >}}
+```
+
+And end up with this:
+
+![JSON String Result](https://raw.githubusercontent.com/moonbuck/plugin-lightbox/main/json_string_result.jpeg)
+
+For a look at how one might use the `gallery` partial directly, check out my [plugin](https://github.com/moonbuck/plugin-gallery "plugin-gallery") that does just that.
+
+But don’t get overwhelmed by all the options. You can keep simple, be all:
+
+```go
+{{< lightbox photo-width="300" src="https://moondeer.blog/uploads/2021/b0e919de8a.jpg" >}}
+```
+
+Or stick with old-school Becker, and be all:
+
+```go
+{{< glightbox src="https://moondeer.blog/uploads/2021/b0e919de8a.jpg" >}}
+```
+
+## A Limited Amount of Style
+In the `static/assets/css` directory you will also find `lightbox.css`, it holds the default styles used by the gallery partial. Feel free to carve this up or trash it entirely.
+
 ```css
 a.gallery-link {
   height: 30vh;
@@ -288,4 +351,3 @@ video.gallery-image {
   vertical-align: bottom;
 }
 ```
-{{< /language >}}

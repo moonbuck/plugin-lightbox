@@ -1,45 +1,99 @@
-{{- if .src -}}
-{{- $src := .src -}}
-<a
-  href="{{ .href | default $src }}"
-  class="glightbox{{- with .link_class }} {{ . }}{{ end }}"
-  {{- with .link_style }}style="{{ . | safeCSS }}"{{ end }}
-  {{- with .gallery }}data-gallery="{{ . }}"{{ end }}
-  {{- with .title }}data-title="{{ . }}"{{ end }}
-  {{- with .description }}data-description="{{ . }}"{{ end }}
-  {{- with .desc_position }}data-desc-position="{{ . }}"{{ end }}
-  {{- with .type }}data-type="{{ . }}"{{ end }}
-  {{- with .effect }}data-effect="{{ . }}"{{ end }}
-  {{- with .width }}data-width="{{ . }}"{{ end }}
-  {{- with .height }}data-height="{{ . }}"{{ end }}
-  {{- with .zoomable }}data-zoomable="{{ . }}"{{ end }}
-  {{- with .draggable }}data-draggable="{{ . }}"{{ end }}
-  {{- with .sizes }}data-sizes="{{ . }}"{{ end }}
-  {{- with .srcset }}data-srcset="{{ . }}"{{ end }}
-  > 
-  {{- if and (in (slice ".mp4" ".mov" ".webm" ".ogg") (path.Ext $src)) (not (isset . "href")) -}}
-  <video playsinline autoplay muted loop
-    src="{{ $src }}"
-    {{- with .video_class }}class="{{ . }}"{{ end }}
-    {{- with .video_style }}style="{{ . | safeCSS }}"{{ end -}}
-    ></video>
-  {{- else -}}
-  <img
-    {{- with .photo_width }}
-    src="https://micro.blog/photos/{{ . }}x/{{ $src }}"
-    {{- else }}
-    src="{{ $src }}"
-    {{- end }}
-    {{- with .alt }}alt="{{ . }}"{{ end }}
-    {{- with .img_class }}class="{{ . }}"{{ end }}
-    {{- with .img_style }}
-    style="{{ . | safeCSS }}"
-    {{- else -}}
-    {{- with .photo_width }}
-    style="width: {{ . }}px; height: auto; max-width: 100%"
-    {{- end -}}
-    {{- end }}
-  />
-  {{- end -}}
-</a>
-{{- end -}}
+{{/*
+parameters:
+
+href: The URL for the slide content. This is required unless a src parameter value has been provided.
+
+src: The URL for the link content. This is required unless an href parameter value has been provided.
+
+link_class: Custom class to apply to the anchor tag. Default is undefined. 'glightbox' is always applied.
+
+link_style: Custom style to apply to the anchor tag. Default is undefined.
+
+gallery: The name of the slide's gallery. Default is undefined.
+
+title: The slide's title. Default is undefined.
+
+description: The slide's description. Default is undefined.
+
+desc_position: (bottom, top, left, right) Where the slide's description should be positioned. Default is bottom.
+
+type: (image, video, inline?, iframe?) The slide type. Default infers from source.
+
+effect: (zoom, fade, none) The animation effect the slide should use. Default is zoom.
+
+width: The custom width for this slide. Default is 900px.
+
+height: The custom height for this slide. Default is 506px.
+
+zoomable: Whether this slide should be zoomable. Default is true.
+
+draggable: Whether this slide should be draggable. Default is true.
+
+sizes: Specifies image sizes for different page layouts. Default is undefined.
+
+srcset: Specifies a list of image files to use in different situations. Default is undefined.
+
+video_class: Custom class to apply to the video tag. Default is undefined.
+
+video_style: Custom style to apply to the video tag. Default is undefined.
+
+loop: Whether the link video should loop. Default is true.
+
+autoplay: Whether the link video should be set to autoplay. Default is true.
+
+preload: Value for the link video's preload attribute. This ignored when set to autoplay. Default is undefined.
+
+alt: Specifies an alternate text for an image. Default is undefined.
+
+img_class: Custom class to apply to the img tag. Default is undefined.
+
+img_style: Custom style to apply to the img tag. Default is undefined.
+
+photo_width: Specifies a pixel width for a thumbnail image to be fetched using the https://micro.blog/photos/ API. Default is undefined.
+
+*/}}
+
+{{if (or .href .src)}}
+
+  {{$href := false}}
+  {{$src := false}}
+
+  {{if not (and .href .src)}}
+    {{if .href}}
+      {{$href = .href}}
+      {{$src = .href}}
+    {{else}}
+      {{$href = .src}}
+      {{$src = .src}}
+    {{end}}
+  {{else}}
+    {{$href = .href}}
+    {{$src = .src}}  
+  {{end}}
+
+  <a
+    href="{{ $href }}"
+    class="glightbox{{with .link_class}} {{.}}{{end}}"
+    {{with .link_style}}style="{{. | safeCSS}}"{{end}}
+    {{with .gallery}}data-gallery="{{.}}"{{end}}
+    {{with .title}}data-title="{{.}}"{{end}}
+    {{with .description}}data-description="{{.}}"{{end}}
+    {{with .desc_position}}data-desc-position="{{.}}"{{end}}
+    {{with .type}}data-type="{{.}}"{{end}}
+    {{with .effect}}data-effect="{{.}}"{{end}}
+    {{with .width}}data-width="{{.}}"{{end}}
+    {{with .height}}data-height="{{.}}"{{end}}
+    {{with .zoomable}}data-zoomable="{{.}}"{{end}}
+    {{with .draggable}}data-draggable="{{.}}"{{end}}
+    {{with .sizes}}data-sizes="{{.}}"{{end}}
+    {{with .srcset}}data-srcset="{{.}}"{{end}}
+    > 
+    {{if (in (slice ".mp4" ".mov" ".webm" ".ogg") (path.Ext $src)) }}
+      {{partial "link-content/video.html" (dict "src" $src "class" .video_class "style" .video_style "loop" (.loop | default true) "autoplay" (.autoplay | default (cond (isset . "preload") false true)) "preload" (cond (isset . "autoplay") false .preload))}}
+    {{else if .photo_width}}
+      {{partial "link-content/img-thumbnail.html" (dict "src" $src "alt" .alt "class" .img_class "style" .img_style "width" .photo_width)}}
+    {{else}}
+      {{partial "link-content/img.html" (dict "src" $src "alt" .alt "class" .img_class "style" .img_style)}}
+    {{end}}
+  </a>
+  {{end}}

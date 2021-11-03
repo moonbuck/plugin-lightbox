@@ -5,6 +5,14 @@
 {{ $gallery := .gallery }}
 {{ $slide_data := .slide_data }}
 
+{{ if (not ($slide_data | reflect.IsSlice)) }}
+{{ with transform.Unmarshal $slide_data }}
+{{ $slide_data = . }}
+{{ end }}
+{{ end }}
+
+{{ if ($slide_data | reflect.IsSlice) }}
+
 {{/* Establish key values for the slide data */}}
 {{ $title_key := .title_key | default "title" }}
 {{ $desc_key := .desc_key | default "description" }}
@@ -66,6 +74,9 @@
 {{/* Close range */}}
 {{ end }}
 </div>
+
+{{/* Close if */}}
+{{ end }}
 
 {{/* Close if */}}
 {{ end }}

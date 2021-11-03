@@ -1,5 +1,5 @@
 {
-    "version": "5.0.0",
+    "version": "6.0.0",
     "title": "Moondeer's Lightbox",
     "description": "Another glightbox plugin, inspired by https://github.com/jsonbecker/plugin-glightbox.",
     "includes": [

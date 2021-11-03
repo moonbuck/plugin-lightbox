@@ -1,15 +1,34 @@
-{{/* Gallery name should be passed as first parameter */}}
-{{- $gallery := .Get 0 -}}
-{{/* Create a flex box container for the images */}}
-<div 
-  class="gallery {{ $gallery }}"
-  style="display: flex;">
-{{/* Parse out markdown image declarations from `.Inner` and iterate */}}
-{{- $parsed_images := findRE "[!][[][^]]*[]][(][^)]+[)]" .Inner -}}
-{{- range $parsed_images -}}
-  {{/* Parse the image URL */}}
-  {{- $src := index (findRE "http[^)]+" .) 0 -}}
-  {{- $description := replaceRE "[!][[]([^]]*)[]].+" "$1" . }}
-  {{ partial "lightbox.html" (dict "src" $src "gallery" $gallery  "description" $description "link_class" "gallery-link" "img_class" "gallery-image") }}
-{{- end -}}
-</div>
+{{ $slide_data := false }}
+
+{{ with .Inner }}
+
+  {{ $slide_data = slice }}
+
+  {{/* Parse out markdown image declarations */}}
+  {{ range findRE "[!][[][^]]*[]][(][^)]+[)]" . }}
+  
+    {{/* Parse the image URL */}}
+    {{ $src := index (findRE "http[^)]+" .) 0 }}
+    {{ $title := replaceRE "[!][[]([^]]*)[]].+" "$1" . }}
+    {{ $slide := dict "title" $title "src" $src }}
+    {{ $slide_data = $slide_data | append $slide }}
+  
+  {{ end }}
+
+{{ end }}
+
+{{ if $slide_data }}
+
+  {{ if .IsNamedParams }}
+  
+  {{/* Pass through any named parameter values */}}
+  {{ partial "gallery.html" (dict "gallery" (.Get "gallery") "slide_data" $slide_data "flex_wrap" (.Get "flex-wrap") "div_style" (.Get "div-style") "div_class" (.Get "div-class") "link_class" (.Get "link-class") "link_style" (.Get "link-style") "img_class" (.Get "img-class") "img_style" (.Get "img-style") "video_class" (.Get "video-class") "video_style" (.Get "video-style") "photo_width" (.Get "photo-width")) }}
+  
+  {{ else }}
+  
+  {{/* Gallery name should be passed as first parameter */}}  
+  {{ partial "gallery.html" (dict "gallery" (.Get 0) "slide_data" $slide_data "flex_wrap" "nowrap") }}
+  
+  {{ end }}
+
+{{ end }}

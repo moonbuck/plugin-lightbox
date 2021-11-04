@@ -271,7 +271,7 @@ When it comes to the included shortcodes, the beast of burden here is definitely
 </dl>
 
 ### Okay, That’s A Lot
-Some of y’all will be relieved to discover that I also include a shortcode mimicing Becker’s `glightbox` shortcode. It takes the following parameters:
+Some of y’all will be relieved to discover that I also include a shortcode mimicking Becker’s `glightbox` shortcode. It takes the following parameters:
 
 <dl>
 <dt>src</dt>

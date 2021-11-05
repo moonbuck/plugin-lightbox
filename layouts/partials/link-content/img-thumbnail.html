@@ -1,6 +1,6 @@
 <img
-  src="https://micro.blog/photos/{{.width}}x/{{ .src }}"
-  {{with .alt}}alt="{{.}}"{{end}}
-  {{with .class}}class="{{.}}"{{end}}
-  style="width:{{.width}}px;height:auto;max-width:100%{{with .style}};{{.|safeCSS}}{{end}}"
+  src="https://micro.blog/photos/{{ .width }}x/{{ .src }}"
+  {{ with .alt}}alt="{{ . }}"{{ end }}
+  {{ with .class}}class="{{ . }}"{{ end }}
+  style="width:{{ .width }}px;height:auto;max-width:100%{{ with .style }};{{ . | safeCSS }}{{ end }}"
 />

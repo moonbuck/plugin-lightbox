@@ -1,4 +1,4 @@
-{{/*
+{{- /*
 parameters:
 
 href: The URL for the slide content. This is required unless a src parameter value has been provided.
@@ -53,47 +53,47 @@ photo_width: Specifies a pixel width for a thumbnail image to be fetched using t
 
 */}}
 
-{{if (or .href .src)}}
+{{- if (or .href .src) }}
 
-  {{$href := false}}
-  {{$src := false}}
+  {{- $href := false }}
+  {{- $src := false }}
 
-  {{if not (and .href .src)}}
-    {{if .href}}
-      {{$href = .href}}
-      {{$src = .href}}
-    {{else}}
-      {{$href = .src}}
-      {{$src = .src}}
-    {{end}}
-  {{else}}
-    {{$href = .href}}
-    {{$src = .src}}  
-  {{end}}
+  {{- if not (and .href .src) }}
+    {{- if .href }}
+      {{- $href = .href }}
+      {{- $src = .href }}
+    {{- else }}
+      {{- $href = .src }}
+      {{- $src = .src }}
+    {{- end }}
+  {{- else }}
+    {{- $href = .href }}
+    {{- $src = .src }}  
+  {{- end }}
 
   <a
-    href="{{ $href }}"
-    class="glightbox{{with .link_class}} {{.}}{{end}}"
-    {{with .link_style}}style="{{. | safeCSS}}"{{end}}
-    {{with .gallery}}data-gallery="{{.}}"{{end}}
-    {{with .title}}data-title="{{.}}"{{end}}
-    {{with .description}}data-description="{{.}}"{{end}}
-    {{with .desc_position}}data-desc-position="{{.}}"{{end}}
-    {{with .type}}data-type="{{.}}"{{end}}
-    {{with .effect}}data-effect="{{.}}"{{end}}
-    {{with .width}}data-width="{{.}}"{{end}}
-    {{with .height}}data-height="{{.}}"{{end}}
-    {{with .zoomable}}data-zoomable="{{.}}"{{end}}
-    {{with .draggable}}data-draggable="{{.}}"{{end}}
-    {{with .sizes}}data-sizes="{{.}}"{{end}}
-    {{with .srcset}}data-srcset="{{.}}"{{end}}
+    href="{{  $href  }}"
+    class="glightbox{{ with .link_class }} {{ . }}{{ end }}"
+    {{- with .link_style }}style="{{ . | safeCSS }}"{{ end }}
+    {{- with .gallery }}data-gallery="{{ . }}"{{ end }}
+    {{- with .title }}data-title="{{ . }}"{{ end }}
+    {{- with .description }}data-description="{{ . }}"{{ end }}
+    {{- with .desc_position }}data-desc-position="{{ . }}"{{ end }}
+    {{- with .type }}data-type="{{ . }}"{{ end }}
+    {{- with .effect }}data-effect="{{ . }}"{{ end }}
+    {{- with .width }}data-width="{{ . }}"{{ end }}
+    {{- with .height }}data-height="{{ . }}"{{ end }}
+    {{- with .zoomable }}data-zoomable="{{ . }}"{{ end }}
+    {{- with .draggable }}data-draggable="{{ . }}"{{ end }}
+    {{- with .sizes }}data-sizes="{{ . }}"{{ end }}
+    {{- with .srcset }}data-srcset="{{ . }}"{{ end }}
     > 
-    {{if (in (slice ".mp4" ".mov" ".webm" ".ogg") (path.Ext $src)) }}
-      {{partial "link-content/video.html" (dict "src" $src "class" .video_class "style" .video_style "loop" (.loop | default true) "autoplay" (.autoplay | default true) "preload" .preload)}}
-    {{else if .photo_width}}
-      {{partial "link-content/img-thumbnail.html" (dict "src" $src "alt" .alt "class" .img_class "style" .img_style "width" .photo_width)}}
-    {{else}}
-      {{partial "link-content/img.html" (dict "src" $src "alt" .alt "class" .img_class "style" .img_style)}}
-    {{end}}
+    {{- if (in (slice ".mp4" ".mov" ".webm" ".ogg") (path.Ext $src))  }}
+      {{- partial "link-content/video.html" (dict "src" $src "class" .video_class "style" .video_style "loop" (.loop | default true) "autoplay" (.autoplay | default true) "preload" .preload) }}
+    {{- else if .photo_width }}
+      {{- partial "link-content/img-thumbnail.html" (dict "src" $src "alt" .alt "class" .img_class "style" .img_style "width" .photo_width) }}
+    {{- else }}
+      {{- partial "link-content/img.html" (dict "src" $src "alt" .alt "class" .img_class "style" .img_style) }}
+    {{- end }}
   </a>
-  {{end}}
+  {{- end }}

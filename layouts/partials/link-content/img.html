@@ -1,6 +1,6 @@
 <img
-  src="{{.src}}"
-  {{with .alt}}alt="{{.}}"{{end}}
-  {{with .class}}class="{{.}}"{{end}}
-  {{with .style}}style="{{.|safeCSS}}"{{end}}
+  src="{{ .src }}"
+  {{ with .alt }}alt="{{ . }}"{{ end }}
+  {{ with .class }}class="{{ . }}"{{ end }}
+  {{ with .style }}style="{{ . | safeCSS }}"{{ end }}
 />

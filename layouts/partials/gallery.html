@@ -1,4 +1,4 @@
-{{/*
+{{- /*
 gallery data parameters:
 
 wrap: Whether the gallery links should wrap or be constrained to a single row. Default is true.
@@ -89,73 +89,73 @@ photo_width: Specifies a pixel width for a thumbnail image to be fetched using t
 
 */}}
 
-{{/* Check we have what we need to start */}}
-{{ if (and .gallery .slide_data) }}
+{{- /* Check we have what we need to start */}}
+{{- if (and .gallery .slide_data) }}
 
-{{ $gallery := .gallery }}
-{{ $slide_data := .slide_data }}
+{{- $gallery := .gallery }}
+{{- $slide_data := .slide_data }}
 
-{{ if (not ($slide_data | reflect.IsSlice)) }}
-{{ with transform.Unmarshal $slide_data }}
-{{ $slide_data = . }}
-{{ end }}
-{{ end }}
+{{- if (not ($slide_data | reflect.IsSlice)) }}
+{{- with transform.Unmarshal $slide_data }}
+{{- $slide_data = . }}
+{{- end }}
+{{- end }}
 
-{{ if ($slide_data | reflect.IsSlice) }}
+{{- if ($slide_data | reflect.IsSlice) }}
 
-{{ $default_values := site.Data.plugin_lightbox.default_gallery_parameters | default dict }}
+{{- $default_values := site.Data.plugin_lightbox.default_gallery_parameters | default dict }}
   
-{{/* Generate the style and class attributes for the div */}}
-{{ $wrap := .wrap | default $default_values.wrap | string }}
-{{ $flex_wrap := cond (eq $wrap "false") "nowrap" "wrap" }}
-{{ $div_style := printf "display: flex; flex-wrap: %s;" $flex_wrap }}
-{{ with (.div_style | default $default_values.div_style) }}{{ $div_style = printf "%s %s" $div_style . }}{{ end }}
-{{ $div_id := $gallery | anchorize }}
-{{ $div_class := "gallery" }}
-{{ with (.div_class | default $default_values.div_class) }}{{ $div_class = printf "%s %s" $div_class (. | anchorize) }}{{ end }}
+{{- /* Generate the style and class attributes for the div */}}
+{{- $wrap := .wrap | default $default_values.wrap | string }}
+{{- $flex_wrap := cond (eq $wrap "false") "nowrap" "wrap" }}
+{{- $div_style := printf "display: flex; flex-wrap: %s;" $flex_wrap }}
+{{- with (.div_style | default $default_values.div_style) }}{{ $div_style = printf "%s %s" $div_style . }}{{ end }}
+{{- $div_id := $gallery | anchorize }}
+{{- $div_class := "gallery" }}
+{{- with (.div_class | default $default_values.div_class) }}{{ $div_class = printf "%s %s" $div_class (. | anchorize) }}{{ end }}
 
-{{/* Capture optional parameter values shared by all slides before context switches */}}
-{{ $link_class := "gallery-link" }}
-{{ with (.link_class | default $default_values.link_class) }}
-{{ $link_class = printf "%s %s" $link_class (. | anchorize) }}
-{{ end }}
-{{ $img_class := "gallery-image" }}
-{{ with (.img_class | default $default_values.img_class) }}
-{{ $img_class = printf "%s %s" $img_class (. | anchorize) }}
-{{ end }}
-{{ $video_class := "gallery-video" }}
-{{ with (.video_class | default $default_values.video_class) }}
-{{ $video_class = printf "%s %s" $video_class (. | anchorize) }}
-{{ end }}
-{{ $photo_width := .photo_width | default $default_values.photo_width }}
-{{ $link_style := .link_style | default $default_values.link_style }}
-{{ $img_style := .img_style | default $default_values.img_style }}
-{{ $video_style := .video_style | default $default_values.video_style }}
-{{ $loop := .loop | default $default_values.loop }}
-{{ $autoplay := .autoplay | default $default_values.autoplay }}
-{{ $preload := .preload | default $default_values.preload }}
-{{ $desc_position := .desc_position | default $default_values.desc_position }}
-{{ $width := .width | default $default_values.width }}
-{{ $height := .height | default $default_values.height }}
-{{ $effect := .effect | default $default_values.effect }}
-{{ $draggable := .draggable | default $default_values.draggable }}
-{{ $zoomable := .zoomable | default $default_values.zoomable }}
+{{- /* Capture optional parameter values shared by all slides before context switches */}}
+{{- $link_class := "gallery-link" }}
+{{- with (.link_class | default $default_values.link_class) }}
+{{- $link_class = printf "%s %s" $link_class (. | anchorize) }}
+{{- end }}
+{{- $img_class := "gallery-image" }}
+{{- with (.img_class | default $default_values.img_class) }}
+{{- $img_class = printf "%s %s" $img_class (. | anchorize) }}
+{{- end }}
+{{- $video_class := "gallery-video" }}
+{{- with (.video_class | default $default_values.video_class) }}
+{{- $video_class = printf "%s %s" $video_class (. | anchorize) }}
+{{- end }}
+{{- $photo_width := .photo_width | default $default_values.photo_width }}
+{{- $link_style := .link_style | default $default_values.link_style }}
+{{- $img_style := .img_style | default $default_values.img_style }}
+{{- $video_style := .video_style | default $default_values.video_style }}
+{{- $loop := .loop | default $default_values.loop }}
+{{- $autoplay := .autoplay | default $default_values.autoplay }}
+{{- $preload := .preload | default $default_values.preload }}
+{{- $desc_position := .desc_position | default $default_values.desc_position }}
+{{- $width := .width | default $default_values.width }}
+{{- $height := .height | default $default_values.height }}
+{{- $effect := .effect | default $default_values.effect }}
+{{- $draggable := .draggable | default $default_values.draggable }}
+{{- $zoomable := .zoomable | default $default_values.zoomable }}
 
-{{/* Output the opening div tag with the generated attributes */}}
+{{- /* Output the opening div tag with the generated attributes */}}
 <div id="{{ $div_id }}" class="{{ $div_class }}" style="{{ $div_style | safeCSS }}">
 
-{{/* Iterate over the individual slides */}}
-{{ range $slide_data }}
+{{- /* Iterate over the individual slides */}}
+{{- range $slide_data }}
 
-{{/* Invoke the lightbox partial to generate the slide */}}
-{{ partial "lightbox.html" (dict "href" (.href|default .src) "src" (.src|default .href) "title" .title "description" .description "desc_position" (.desc_position|default $desc_position) "width" (.width|default $width) "height" (.height|default $height) "gallery" $gallery "link_class" $link_class "link_style" (.link_style|default $link_style) "img_class" $img_class "img_style" (.img_style|default $img_style) "video_class" $video_class "video_style" (.video_style|default $video_style) "loop" (.loop|default $loop) "autoplay" (.autoplay|default $autoplay) "preload" (.preload|default $preload) "photo_width" (.photo_width|default $photo_width) "alt" .alt "effect" (.effect|default $effect) "draggable" (.draggable|default $draggable) "zoomable" (.zoomable|default $zoomable)) }}
+{{- /* Invoke the lightbox partial to generate the slide */}}
+{{- partial "lightbox.html" (dict "href" (.href|default .src) "src" (.src|default .href) "title" .title "description" .description "desc_position" (.desc_position|default $desc_position) "width" (.width|default $width) "height" (.height|default $height) "gallery" $gallery "link_class" $link_class "link_style" (.link_style|default $link_style) "img_class" $img_class "img_style" (.img_style|default $img_style) "video_class" $video_class "video_style" (.video_style|default $video_style) "loop" (.loop|default $loop) "autoplay" (.autoplay|default $autoplay) "preload" (.preload|default $preload) "photo_width" (.photo_width|default $photo_width) "alt" .alt "effect" (.effect|default $effect) "draggable" (.draggable|default $draggable) "zoomable" (.zoomable|default $zoomable)) }}
 
-{{/* Close range */}}
-{{ end }}
+{{- /* Close range */}}
+{{- end }}
 </div>
 
-{{/* Close if */}}
-{{ end }}
+{{- /* Close if */}}
+{{- end }}
 
-{{/* Close if */}}
-{{ end }}
+{{- /* Close if */}}
+{{- end }}

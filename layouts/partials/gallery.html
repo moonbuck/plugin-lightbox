@@ -17,9 +17,9 @@ desc_position: (bottom, top, left, right) Where all slides descriptions should b
 
 effect: (zoom, fade, none) The animation effect all slide should use. Default is zoom.
 
-width: The custom width for all slides. Default is 900px.
+width: The custom width for all slides. Default is undefined.
 
-height: The custom height for all slides. Default is 506px.
+height: The custom height for all slides. Default is undefined.
 
 zoomable: Whether slides should be zoomable. Default is true.
 
@@ -61,9 +61,9 @@ type: (image, video, inline?, iframe?) The slide type. Default infers from sourc
 
 effect: (zoom, fade, none) The animation effect the slide should use. Default is zoom.
 
-width: The custom width for this slide. Default is 900px.
+width: The custom width for this slide. Default is undefined.
 
-height: The custom height for this slide. Default is 506px.
+height: The custom height for this slide. Default is undefined.
 
 zoomable: Whether this slide should be zoomable. Default is true.
 
@@ -103,40 +103,43 @@ photo_width: Specifies a pixel width for a thumbnail image to be fetched using t
 
 {{ if ($slide_data | reflect.IsSlice) }}
 
+{{ $default_values := site.Data.plugin_lightbox.default_gallery_parameters | default dict }}
+  
 {{/* Generate the style and class attributes for the div */}}
-{{ $flex_wrap := cond (eq .wrap "false") "nowrap" "wrap" }}
+{{ $wrap := .wrap | default $default_values.wrap | string }}
+{{ $flex_wrap := cond (eq $wrap "false") "nowrap" "wrap" }}
 {{ $div_style := printf "display: flex; flex-wrap: %s;" $flex_wrap }}
-{{ with .div_style }}{{ $div_style = printf "%s %s" $div_style . }}{{ end }}
+{{ with (.div_style | default $default_values.div_style) }}{{ $div_style = printf "%s %s" $div_style . }}{{ end }}
 {{ $div_id := $gallery | anchorize }}
 {{ $div_class := "gallery" }}
-{{ with .div_class }}{{ $div_class = printf "%s %s" $div_class (. | anchorize) }}{{ end }}
+{{ with (.div_class | default $default_values.div_class) }}{{ $div_class = printf "%s %s" $div_class (. | anchorize) }}{{ end }}
 
 {{/* Capture optional parameter values shared by all slides before context switches */}}
 {{ $link_class := "gallery-link" }}
-{{ with .link_class }}
+{{ with (.link_class | default $default_values.link_class) }}
 {{ $link_class = printf "%s %s" $link_class (. | anchorize) }}
 {{ end }}
 {{ $img_class := "gallery-image" }}
-{{ with .img_class }}
+{{ with (.img_class | default $default_values.img_class) }}
 {{ $img_class = printf "%s %s" $img_class (. | anchorize) }}
 {{ end }}
 {{ $video_class := "gallery-video" }}
-{{ with .video_class }}
+{{ with (.video_class | default $default_values.video_class) }}
 {{ $video_class = printf "%s %s" $video_class (. | anchorize) }}
 {{ end }}
-{{ $photo_width := .photo_width }}
-{{ $link_style := .link_style }}
-{{ $img_style := .img_style }}
-{{ $video_style := .video_style }}
-{{ $loop := .loop }}
-{{ $autoplay := .autoplay }}
-{{ $preload := .preload }}
-{{ $desc_position := .desc_position }}
-{{ $width := .width }}
-{{ $height := .height }}
-{{ $effect := .effect }}
-{{ $draggable := .draggable }}
-{{ $zoomable := .zoomable }}
+{{ $photo_width := .photo_width | default $default_values.photo_width }}
+{{ $link_style := .link_style | default $default_values.link_style }}
+{{ $img_style := .img_style | default $default_values.img_style }}
+{{ $video_style := .video_style | default $default_values.video_style }}
+{{ $loop := .loop | default $default_values.loop }}
+{{ $autoplay := .autoplay | default $default_values.autoplay }}
+{{ $preload := .preload | default $default_values.preload }}
+{{ $desc_position := .desc_position | default $default_values.desc_position }}
+{{ $width := .width | default $default_values.width }}
+{{ $height := .height | default $default_values.height }}
+{{ $effect := .effect | default $default_values.effect }}
+{{ $draggable := .draggable | default $default_values.draggable }}
+{{ $zoomable := .zoomable | default $default_values.zoomable }}
 
 {{/* Output the opening div tag with the generated attributes */}}
 <div id="{{ $div_id }}" class="{{ $div_class }}" style="{{ $div_style | safeCSS }}">

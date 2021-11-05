@@ -1,0 +1,39 @@
+The default parameter values to use when creating a gallery and no value has been specified. 
+Parameter List 
+  wrap: Whether the gallery links should wrap or be constrained to a single row. Default is true.
+  
+  div_class: Custom class to apply to the div. Default is undefined. 'gallery' is always applied.
+  
+  div_style: Custom style to apply to the div in additon to the flex declaration and wrap specification. Default is undefined.
+  
+  link_class: Custom class to apply to all anchor tags. Default is undefined. gallery-link and glightbox are always applied.
+  
+  link_style: Custom style to apply to all anchor tags. Default is undefined.
+  
+  desc_position: (bottom, top, left, right) Where all slides descriptions should be positioned. Default is bottom.
+  
+  effect: (zoom, fade, none) The animation effect all slide should use. Default is zoom.
+  
+  width: The custom width for all slides. Default is 900px.
+  
+  height: The custom height for all slides. Default is 506px.
+  
+  zoomable: Whether slides should be zoomable. Default is true.
+  
+  draggable: Whether slides should be draggable. Default is true.
+  
+  video_class: Custom class to apply to all video tags. Default is undefined. gallery-video is always applied.
+  
+  video_style: Custom style to apply to all video tags. Default is undefined.
+  
+  loop: Whether link videos should loop. Default is true.
+  
+  autoplay: Whether link videos should be set to autoplay. Default is true.
+  
+  preload: Value for link video preload attributes. This ignored when set to autoplay. Default is undefined.
+  
+  img_class: Custom class to apply to all img tags. Default is undefined. gallery-image is always applied.
+  
+  img_style: Custom style to apply to all img tags. Default is undefined.
+  
+  photo_width: Specifies a pixel width for a thumbnail image to be fetched using the https://micro.blog/photos/ API. Default is 260. 

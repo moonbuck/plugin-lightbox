@@ -103,7 +103,7 @@ photo_width: Specifies a pixel width for a thumbnail image to be fetched using t
 
 {{- if ($slide_data | reflect.IsSlice) }}
 
-{{- $default_values := site.Data.plugin_lightbox.default_gallery_parameters | default dict }}
+{{- $default_values := (site.Data.plugin_lightbox_default_gallery_parameters | default site.Data.plugin_lightbox.default_gallery_parameters) | default dict }}
   
 {{- /* Generate the style and class attributes for the div */}}
 {{- $wrap := .wrap | default $default_values.wrap | string }}

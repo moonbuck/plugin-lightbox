@@ -112,20 +112,20 @@ photo_width: Specifies a pixel width for a thumbnail image to be fetched using t
 {{- with (.div_style | default $default_values.div_style) }}{{ $div_style = printf "%s %s" $div_style . }}{{ end }}
 {{- $div_id := $gallery | anchorize }}
 {{- $div_class := "gallery" }}
-{{- with (.div_class | default $default_values.div_class) }}{{ $div_class = printf "%s %s" $div_class (. | anchorize) }}{{ end }}
+{{- with (.div_class | default $default_values.div_class) }}{{ $div_class = printf "%s %s" $div_class (delimit (apply (split . " ") "anchorize" ".") " ") }}{{ end }}
 
 {{- /* Capture optional parameter values shared by all slides before context switches */}}
 {{- $link_class := "gallery-link" }}
 {{- with (.link_class | default $default_values.link_class) }}
-{{- $link_class = printf "%s %s" $link_class (. | anchorize) }}
+{{- $link_class = printf "%s %s" $link_class (delimit (apply (split . " ") "anchorize" ".") " ") }}
 {{- end }}
 {{- $img_class := "gallery-image" }}
 {{- with (.img_class | default $default_values.img_class) }}
-{{- $img_class = printf "%s %s" $img_class (. | anchorize) }}
+{{- $img_class = printf "%s %s" $img_class (delimit (apply (split . " ") "anchorize" ".") " ") }}
 {{- end }}
 {{- $video_class := "gallery-video" }}
 {{- with (.video_class | default $default_values.video_class) }}
-{{- $video_class = printf "%s %s" $video_class (. | anchorize) }}
+{{- $video_class = printf "%s %s" $video_class (delimit (apply (split . " ") "anchorize" ".") " ") }}
 {{- end }}
 {{- $photo_width := .photo_width | default $default_values.photo_width }}
 {{- $link_style := .link_style | default $default_values.link_style }}

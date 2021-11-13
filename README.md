@@ -1,78 +1,375 @@
-# plugin-lightbox (A README Experience)
+# plugin-lightbox
 A plugin for [Micro.blog](https://micro.blog "Micro.blog") for presenting a slide carousel containing images and/or videos. It was inspired by Jason Becker’s [plugin](https://github.com/jsonbecker/plugin-glightbox) with which I’m sure you are already familiar.
 
-![Slide](https://raw.githubusercontent.com/moonbuck/plugin-lightbox/main/slide.jpeg)
-
-***Needs updating: lightbox.js is now being built via a template using parameter values***
+![Slide](https://raw.githubusercontent.com/moonbuck/plugin-lightbox/main/images/slide.jpeg)
 
 ## GLightbox Injection
 
 The [GLightbox](https://biati-digital.github.io/glightbox/ "GLightbox") Javascript and CSS Stylesheet have been bundled into the plugin. They may be found in their respective directories beneath `static/assets`.
 
-In the `static/assets/js/` directory you will also find `lightbox.js`, which is the script that creates your `GLightbox` object. There is still so much more parameterization possible with this plugin, perhaps starting with those custom HTML variable values.
+`assets/js/lightbox.js` is a template script that creates your `GLightbox` object using the parameter values configured in the data directory. To understand how my plugins utilize data files, have a look at [this post](https://moondeer.blog/2021/11/11/feeding-data-to.html "Feeding Data to My Plugins"). 
 
-```js
-const customLightboxHTML = `<div id="glightbox-body" class="glightbox-container">
-    <div class="gloader visible"></div>
-    <div class="goverlay"></div>
-    <div class="gcontainer">
-    <div id="glightbox-slider" class="gslider"></div>
-    <button class="gnext gbtn" tabindex="0" aria-label="Next" data-customattribute="example">{nextSVG}</button>
-    <button class="gprev gbtn" tabindex="1" aria-label="Previous">{prevSVG}</button>
-    <button class="gclose gbtn" tabindex="2" aria-label="Close">{closeSVG}</button>
-</div>
-</div>`;
+## Parameters
 
-let customSlideHTML = `<div class="gslide">
-    <div class="gslide-inner-content">
-        <div class="ginner-container">
-            <div class="gslide-media">
-            </div>
-            <div class="gslide-description">
-                <div class="gdesc-inner">
-                    <h4 class="gslide-title"></h4>
-                    <div class="gslide-desc"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-    </div>`;
-    
-const lightbox = GLightbox({
-  lightboxHTML: customLightboxHTML,
-  slideHTML: customSlideHTML
-});
+The key to understanding and setting values for the plugin parameters is to read the commented template files I’ve included.
 
-lightbox.on('open', () => {
-  if (typeof dataLayer === 'undefined') { return; }
-  dataLayer.push({'event': 'lightbox_opened'});
-});
+There is a file for configuring the default values used by partials and shortcodes when creating a gallery. It lives at `data/plugin_lightbox/defaults.toml` and looks like this:
 
-lightbox.on('close', () => {
-  if (typeof dataLayer === 'undefined') { return; }
-  dataLayer.push({'event': 'lightbox_closed'});
-});
+```TOML
+# Whether the gallery slide links should wrap or be constrained to
+# a single row. This affects the container's flex-wrap value.
+#
+wrap = true
 
-lightbox.on('slide_changed', ({ prev, current }) => {
-  
-  if (typeof dataLayer === 'undefined') { return; }
-  
-  // Prev and current are objects that contain the following data
-  // const { slideIndex, slideNode, slideConfig, player, trigger } = current;
-  let event = 'lightbox_slide_changed';
-  let title = current.slideConfig.title;
-  let alt = current.slideConfig.alt;
-  let description = current.slideConfig.description;
-  let type = current.slideConfig.type;
-  
-  dataLayer.push({'event': event,'slide_title': title,'art_piece':title,'slide_alt': alt,'slide_description': description,'slide_type': type});
-  
-});
+# Custom class to apply to the <div> tag. The gallery.html partial
+# always adds the 'gallery' class. This value will be anchorized
+# around spaces and joined with 'gallery'
+#
+div_class = ""
+
+# Custom style to apply to the <div> tag. The gallery.html partial
+# always adds 'display: flex' and `flex-wrap: (no)wrap`. This will
+# be added after.
+#
+div_style = "gap:0px"
+
+# Custom class to apply to all <a> tags. The gallery.html partial
+# always adds the 'gallery-link' class. This value will be anchorized
+# around spaces and joined with 'gallery-link'
+#
+link_class = ""
+
+# Custom style to apply to all <a> tags.
+#
+link_style = "height:20vh;width:20vh;flex-grow:1"
+
+# Default description position for all slides.
+#
+desc_position = ""
+
+# Default effect to set for slide transitions. Valid values are
+# 'zoom', 'fade', and 'none'. GLightbox defaults to `zoom`.
+#
+effect = ""
+
+# Default width to apply to all slides.
+#
+width = ""
+
+# Default height to apply to all slides.
+#
+height = ""
+
+# Whether slides shall be zoomable by default.
+# Glightbox defaults to true.
+#
+zoomable = ""
+
+# Whether slides shall be draggable by default.
+# Glightbox defaults to true.
+#
+draggable = ""
+
+# Custom class to apply to all <video> tags. The gallery.html partial
+# always adds the 'gallery-video' class. This value will be anchorized
+# around spaces and joined with 'gallery-video'
+#
+video_class = ""
+
+# Custom style to apply to all <video> tags.
+#
+video_style = "max-height:100%;min-height:100%;object-fit:cover; vertical-align:bottom"
+
+# Whether videos used as link content should loop by default.
+#
+loop = true
+
+# Whether videos used as link content should autoplay by default.
+#
+autoplay = true
+
+# Whether videos used as link content should preload by default.
+# Valid values are 'auto', 'metadata', and 'none'. Ignored when
+# autoplay is true
+#
+preload = ""
+
+# Custom class to apply to all <img> tags. The gallery.html partial
+# always adds the 'gallery-image' class. This value will be anchorized
+# around spaces and joined with 'gallery-image'
+#
+img_class = ""
+
+# Custom style to apply to all <img> tags. When photo_width has
+# been set, img-thumbnail.html will add the following style
+# 'width:[photo_width]px; height: auto; max-width: 100%'. This
+# would be appended after in such a case.
+#
+img_style = "max-height:100%;min-height:100%;object-fit:cover; vertical-align:bottom"
+
+# Default pixel width for fetching thumbnail images via https://micro.blog/photos/ API.
+#
+photo_width = 260
+
 ```
 
-You’ll notice that the lightbox open and close events, as well as slide change events, are monitored and various values pushed into `dataLayer`. I did this to make it available to myself for Google Tag Manager; but, you needn’t keep it. This is another possible point of parameterization.
+This file may be stored in a custom theme at `data/plugin_lightbox_defaults.toml` to persist the values between plugin updates.
 
-If you’re into customizing sh$t, you will want to check out the [glightbox README](https://github.com/biati-digital/glightbox#readme "Glightbox README"). It is full of useful things to know about using the framework.
+There is also a file for configuring the `GLightbox` instance. It lives at `data/plugin_lightbox/lightbox.toml` and looks like this:
+
+```TOML
+# Whether to generate events for analytical consumption. When this
+# is true, the following code is added when the lightbox instance
+# gets created:
+#
+# lightbox.on('open', () => {
+#   if (typeof dataLayer === 'undefined') { return; }
+#   dataLayer.push({'event': 'lightbox_opened'});
+# });
+#
+# lightbox.on('close', () => {
+#   if (typeof dataLayer === 'undefined') { return; }
+#   dataLayer.push({'event': 'lightbox_closed'});
+# });
+#
+# lightbox.on('slide_changed', ({ prev, current }) => {
+#
+#   if (typeof dataLayer === 'undefined') { return; }
+#
+#   // Prev and current are objects that contain the following data
+#   // const { slideIndex, slideNode, slideConfig, player, trigger } = current;
+#   let event = 'lightbox_slide_changed';
+#   let title = current.slideConfig.title;
+#   let alt = current.slideConfig.alt;
+#   let description = current.slideConfig.description;
+#   let type = current.slideConfig.type;
+#
+#   dataLayer.push({'event': event,
+#                   'slide_title': title,
+#                   'art_piece':title,
+#                   'slide_alt': alt,
+#                   'slide_description': description,
+#                   'slide_type': type});
+#  
+# });
+#
+# Note: This value ranks lower than the plugin parameter value when both are present.
+#
+GenerateEvents = false
+
+# Name of the selector for example '.glightbox' or 'data-glightbox' 
+# or '*[data-glightbox]'
+#
+Selector = ".glightbox"
+
+# Name of the skin, it will add a class to the lightbox so you 
+# can style it with css.
+#
+Skin = "clean"
+
+# Name of the effect on lightbox open. (zoom, fade, none)
+#
+OpenEffect = "zoom"
+
+# Name of the effect on lightbox close. (zoom, fade, none)
+#
+CloseEffect = "zoom"
+
+# Name of the effect on slide change. (slide, fade, zoom, none)
+#
+SlideEffect = "slide"
+
+# More text for descriptions on mobile devices.
+#
+MoreText = "See more"
+
+# Number of characters to display on the description before adding
+# the moreText link (only for mobiles), if 0 it will display the
+# entire description.
+#
+MoreLength = 60
+
+# Show or hide the close button.
+#
+CloseButton = true
+
+# Enable or disable the touch navigation (swipe).
+#
+TouchNavigation = true
+
+# Image follow axis when dragging on mobile.
+#
+TouchFollowAxis = true
+
+# Enable or disable the keyboard navigation.
+#
+KeyboardNavigation = true
+
+# Close the lightbox when clicking outside the active slide.
+#
+CloseOnOutsideClick = true
+
+# Start lightbox at defined index.
+#
+StartAt = 0
+
+# Default width for inline elements and iframes, you can define a
+# specific size on each slide. You can use any unit for example 
+# 90% or 100vw for full width
+#
+Width = "900px"
+
+# Default height for inline elements and iframes, you can define
+# a specific size on each slide.You can use any unit for example
+# 90% or 100vw For inline elements you can set the height to auto.
+#
+Height = "506px"
+
+# Default width for videos. Videos are responsive so height is not
+# required. The width can be in px % or even vw for example, 500px,
+# 90% or 100vw for full width videos
+VideosWidth = "960px"
+
+# Global position for slides description, you can define a 
+# specific position on each slide (bottom, top, left, right).
+#
+# DescPosition = "bottom"
+
+# Loop slides on end.
+#
+Loop = false
+
+# Enable or disable zoomable images you can also use 
+# data-zoomable="false" on individual nodes.
+#
+Zoomable = true
+
+# Enable or disable mouse drag to go prev and next slide 
+# (only images and inline content), you can also use 
+# data-draggable="false" on individual nodes.
+Draggable = true
+
+# Used with draggable. Number of pixels the user has to drag 
+# to go to prev or next slide.
+#
+DragToleranceX = 40
+
+# Used with draggable. Number of pixels the user has to drag up 
+# or down to close the lightbox (Set 0 to disable vertical drag).
+#
+DragToleranceY = 65
+
+# If true the slide will automatically change to prev/next or 
+# close if dragToleranceX or dragToleranceY is reached, 
+# otherwise it will wait till the mouse is released.
+#
+DragAutoSnap = false
+
+# Enable or disable preloading.
+#
+Preload = true
+
+# Set your own svg icons.
+#
+# SVG = '{}'
+
+# Define or adjust lightbox animations.
+#
+# See the custom animation section of the README:
+# https://github.com/biati-digital/glightbox#adding-a-custom-animation
+#
+# CSSEfects = '{}'
+
+# You can completely change the html of GLightbox. See the 
+# Themeable section in the README:
+# https://github.com/biati-digital/glightbox#readme.
+# 
+LightboxHTML = '''
+<div id="glightbox-body" class="glightbox-container">
+  <div class="gloader visible"></div>
+  <div class="goverlay"></div>
+  <div class="gcontainer">
+    <div id="glightbox-slider" class="gslider"></div>
+    <button class="gnext gbtn" tabindex="0" 
+            aria-label="Next">{nextSVG}</button>
+    <button class="gprev gbtn" tabindex="1" 
+            aria-label="Previous">{prevSVG}</button>
+    <button class="gclose gbtn" tabindex="2" 
+            aria-label="Close">{closeSVG}</button>
+  </div>
+</div>
+'''
+
+# You can completely change the html of the individual slide. 
+# See the Themeable section in the README:
+# https://github.com/biati-digital/glightbox#readme.
+#
+SlideHTML = '''
+<div class="gslide">
+  <div class="gslide-inner-content">
+    <div class="ginner-container">
+      <div class="gslide-media"></div>
+      <div class="gslide-description">
+        <div class="gdesc-inner">
+          <h4 class="gslide-title"></h4>
+          <div class="gslide-desc"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+'''
+
+# Autoplay videos on open.
+#
+AutoplayVideos =  true
+
+# If true video will be focused on play to allow keyboard 
+# shortcuts for the player, this will deactivate prev and 
+# next arrows to change slide so use it only if you know 
+# what you are doing.
+#
+# AutofocusVideos = false
+
+# Video player options. See the video player options in
+# the README: https://github.com/biati-digital/glightbox#video-player
+#
+# The example given in the README looks like
+# this:
+# {
+#     css: 'https://cdn.plyr.io/3.5.6/plyr.css',
+#     js: 'https://cdn.plyr.io/3.5.6/plyr.js',
+#     config: {
+#       ratio: '16:9', // or '4:3'
+#       muted: false,
+#       hideControls: true,
+#       youtube: {
+#         noCookie: true,
+#         rel: 0,
+#         showinfo: 0,
+#         iv_load_policy: 3
+#       },
+#       vimeo: {
+#         byline: false,
+#         portrait: false,
+#         title: false,
+#         speed: true,
+#         transparent: false
+#       }
+#     }
+#   }
+# Plyr = '{}'
+```
+
+This file may be stored in custom theme at `data/plugin_lightbox_lightbox.toml` to persist the values between plugin updates.
+
+There is only one parameter you can set via the plugin parameters interface.
+
+![](https://raw.githubusercontent.com/moonbuck/plugin-lightbox/main/images/plugin_parameter.jpeg)
+
+ If you set the parameter value there, it will take precedence versus setting `GenerateEvents` in a data file (this is unusual for my plugins. I wanted to make it easy to flip this one switch on and off).  
+
+Check out the [glightbox README](https://github.com/biati-digital/glightbox#readme "Glightbox README") for more details regarding all those optional parameters (and they are all optional).
 
 ## Shortcodes (and Partials)
 
@@ -303,20 +600,19 @@ There is a special flavor of the `gallery` shortcode named `gallery-markdown`. I
 
 Say you’re in a Ulysses sheet and wanna drop some images in a gallery. You can be all:
 
-![From Ulysses](https://raw.githubusercontent.com/moonbuck/plugin-lightbox/main/from_ulysses.jpeg)
+![From Ulysses](https://raw.githubusercontent.com/moonbuck/plugin-lightbox/main/images/from_ulysses.jpeg)
 
 and then the result will be all:
 
-![From Ulysses Result](https://raw.githubusercontent.com/moonbuck/plugin-lightbox/main/from_ulysses_result.jpeg) ![Cold Race War](https://raw.githubusercontent.com/moonbuck/plugin-lightbox/main/cold_race_war.jpeg)
+![From Ulysses Result](https://raw.githubusercontent.com/moonbuck/plugin-lightbox/main/images/from_ulysses_result.jpeg) ![Cold Race War](https://raw.githubusercontent.com/moonbuck/plugin-lightbox/main/images/cold_race_war.jpeg)
 
 Or, you could be … that one other guy … that just thinks it’s cool to be able to stick this directly into your Micro.blog post: 
-```md
-{{< gallery gallery="chapterx" scheme="https" host="moondeer.blog" link-style="height:20vh;flex-grow:1;" slide-data="[{\"src\":\"/uploads/2021/4f0024c294.jpg\"}, {\"src\":\"/uploads/2021/b0e919de8a.jpg\"}, {\"src\":\"/uploads/2021/5f0e585195.jpg\"}, {\"src\":\"/uploads/2021/d98e67ac8e.jpg\"}, {\"src\":\"/uploads/2021/8d4a236a5a.jpg\"}, {\"src\":\"/uploads/2021/de2e42c518.jpg\"}, {\"src\":\"/uploads/2021/3f8d0ef051.webp\"}, {\"src\":\"/uploads/2021/6b85041015.webp\"}, {\"src\":\"/uploads/2021/e84db9a063.jpg\"}, {\"src\":\"/uploads/2021/13eb82ba44.jpg\"}, {\"src\":\"/uploads/2021/fd727a1100.jpg\"}, {\"src\":\"/uploads/2021/60d13dc85d.jpg\"}, {\"src\":\"/uploads/2021/b51786fa78.webp\"}, {\"src\":\"/uploads/2021/7cfe1fe6b5.jpg\"}, {\"src\":\"/uploads/2021/60d07419f4.jpg\"}, {\"src\":\"/uploads/2021/ffe769b968.jpg\"}, {\"src\":\"/uploads/2021/730a50d6e2.jpg\"}, {\"src\":\"/uploads/2021/8578f0bc1b.jpg\"}, {\"src\":\"/uploads/2021/b6c5ee9c33.jpg\"}, {\"src\":\"/uploads/2021/d7cde010f4.jpg\"}, {\"src\":\"/uploads/2021/da5caedfd4.jpg\"}, {\"src\":\"/uploads/2021/d99c28d3f2.jpg\"}]" >}}
-```
+
+![Micro.blog Post](https://moondeer.blog/uploads/2021/c9ce0cee4a.jpg)
 
 And end up with this:
 
-![JSON String Result](https://raw.githubusercontent.com/moonbuck/plugin-lightbox/main/json_string_result.jpeg)
+![JSON String Result](https://raw.githubusercontent.com/moonbuck/plugin-lightbox/main/images/json_string_result.jpeg)
 
 For a look at how one might use the `gallery` partial directly, check out my [plugin](https://github.com/moonbuck/plugin-gallery "plugin-gallery") that does just that.
 

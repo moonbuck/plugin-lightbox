@@ -1,10 +1,17 @@
 {
-    "version": "9.0.0",
-    "title": "Moondeer's Lightbox",
-    "description": "Another glightbox plugin, inspired by https://github.com/jsonbecker/plugin-glightbox.",
-    "includes": [
-        "/assets/css/glightbox.min.css",
-        "/assets/css/lightbox.css",
-        "glightbox-injection.html"
-      ]
-  }
+  "version": "9.0.0",
+  "title": "Moondeer's Lightbox",
+  "description": "Another glightbox plugin, inspired by https://github.com/jsonbecker/plugin-glightbox.",
+  "includes": [
+    "/assets/css/glightbox.min.css",
+    "/assets/css/lightbox.css",
+    "glightbox-injection.html"
+  ],
+  "fields": [
+    {
+      "field": "params.lightbox_generate_events",
+      "label": "Push Lightbox Events to dataLayer",
+      "placeholder": "false"
+    } 
+  ]
+}

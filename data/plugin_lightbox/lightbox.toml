@@ -1,3 +1,42 @@
+# Whether to generate events for analytical consumption. When this
+# is true, the following code is added when the lightbox instance
+# gets created:
+#
+# lightbox.on('open', () => {
+#   if (typeof dataLayer === 'undefined') { return; }
+#   dataLayer.push({'event': 'lightbox_opened'});
+# });
+#
+# lightbox.on('close', () => {
+#   if (typeof dataLayer === 'undefined') { return; }
+#   dataLayer.push({'event': 'lightbox_closed'});
+# });
+#
+# lightbox.on('slide_changed', ({ prev, current }) => {
+#
+#   if (typeof dataLayer === 'undefined') { return; }
+#
+#   // Prev and current are objects that contain the following data
+#   // const { slideIndex, slideNode, slideConfig, player, trigger } = current;
+#   let event = 'lightbox_slide_changed';
+#   let title = current.slideConfig.title;
+#   let alt = current.slideConfig.alt;
+#   let description = current.slideConfig.description;
+#   let type = current.slideConfig.type;
+#
+#   dataLayer.push({'event': event,
+#                   'slide_title': title,
+#                   'art_piece':title,
+#                   'slide_alt': alt,
+#                   'slide_description': description,
+#                   'slide_type': type});
+#  
+# });
+#
+# Note: This value ranks lower than the plugin parameter value when both are present.
+#
+GenerateEvents = false
+
 # Name of the selector for example '.glightbox' or 'data-glightbox' 
 # or '*[data-glightbox]'
 #

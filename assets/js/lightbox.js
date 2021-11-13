@@ -98,6 +98,15 @@
 
 const lightbox = GLightbox({{ $settings | jsonify | safeJS }});
 
+{{- $generate_events := false -}}
+{{- if (and (isset site.Params "lightbox_generate_events") (eq site.Params.lightbox_generate_events "true")) -}}
+{{- $generate_events = true -}}
+{{- else if (and (not (isset site.Params "lightbox_generate_events")) $source.GenerateEvents) -}}
+{{- $generate_events = true -}}
+{{- end -}}
+
+{{- if $generate_events }}
+
 lightbox.on('open', () => {
   if (typeof dataLayer === 'undefined') { return; }
   dataLayer.push({'event': 'lightbox_opened'});
@@ -127,4 +136,6 @@ lightbox.on('slide_changed', ({ prev, current }) => {
                   'slide_description': description,
                   'slide_type': type});
   
-  });
+});
+
+{{- end -}}

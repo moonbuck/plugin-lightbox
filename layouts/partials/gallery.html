@@ -103,43 +103,43 @@ photo_width: Specifies a pixel width for a thumbnail image to be fetched using t
 
 {{- if ($slide_data | reflect.IsSlice) }}
 
-{{- $default_values := (site.Data.plugin_lightbox_default_gallery_parameters | default site.Data.plugin_lightbox.default_gallery_parameters) | default dict }}
+{{- $defaults := (site.Data.plugin_lightbox_defaults | default site.Data.plugin_lightbox.defaults) | default dict }}
   
 {{- /* Generate the style and class attributes for the div */}}
-{{- $wrap := .wrap | default $default_values.wrap | string }}
+{{- $wrap := .wrap | default $defaults.wrap | string }}
 {{- $flex_wrap := cond (eq $wrap "false") "nowrap" "wrap" }}
 {{- $div_style := printf "display: flex; flex-wrap: %s;" $flex_wrap }}
-{{- with (.div_style | default $default_values.div_style) }}{{ $div_style = printf "%s %s" $div_style . }}{{ end }}
+{{- with (.div_style | default $defaults.div_style) }}{{ $div_style = printf "%s %s" $div_style . }}{{ end }}
 {{- $div_id := $gallery | anchorize }}
 {{- $div_class := "gallery" }}
-{{- with (.div_class | default $default_values.div_class) }}{{ $div_class = printf "%s %s" $div_class (delimit (apply (split . " ") "anchorize" ".") " ") }}{{ end }}
+{{- with (.div_class | default $defaults.div_class) }}{{ $div_class = printf "%s %s" $div_class (delimit (apply (split . " ") "anchorize" ".") " ") }}{{ end }}
 
 {{- /* Capture optional parameter values shared by all slides before context switches */}}
 {{- $link_class := "gallery-link" }}
-{{- with (.link_class | default $default_values.link_class) }}
+{{- with (.link_class | default $defaults.link_class) }}
 {{- $link_class = printf "%s %s" $link_class (delimit (apply (split . " ") "anchorize" ".") " ") }}
 {{- end }}
 {{- $img_class := "gallery-image" }}
-{{- with (.img_class | default $default_values.img_class) }}
+{{- with (.img_class | default $defaults.img_class) }}
 {{- $img_class = printf "%s %s" $img_class (delimit (apply (split . " ") "anchorize" ".") " ") }}
 {{- end }}
 {{- $video_class := "gallery-video" }}
-{{- with (.video_class | default $default_values.video_class) }}
+{{- with (.video_class | default $defaults.video_class) }}
 {{- $video_class = printf "%s %s" $video_class (delimit (apply (split . " ") "anchorize" ".") " ") }}
 {{- end }}
-{{- $photo_width := .photo_width | default $default_values.photo_width }}
-{{- $link_style := .link_style | default $default_values.link_style }}
-{{- $img_style := .img_style | default $default_values.img_style }}
-{{- $video_style := .video_style | default $default_values.video_style }}
-{{- $loop := .loop | default $default_values.loop }}
-{{- $autoplay := .autoplay | default $default_values.autoplay }}
-{{- $preload := .preload | default $default_values.preload }}
-{{- $desc_position := .desc_position | default $default_values.desc_position }}
-{{- $width := .width | default $default_values.width }}
-{{- $height := .height | default $default_values.height }}
-{{- $effect := .effect | default $default_values.effect }}
-{{- $draggable := .draggable | default $default_values.draggable }}
-{{- $zoomable := .zoomable | default $default_values.zoomable }}
+{{- $photo_width := .photo_width | default $defaults.photo_width }}
+{{- $link_style := .link_style | default $defaults.link_style }}
+{{- $img_style := .img_style | default $defaults.img_style }}
+{{- $video_style := .video_style | default $defaults.video_style }}
+{{- $loop := .loop | default $defaults.loop }}
+{{- $autoplay := .autoplay | default $defaults.autoplay }}
+{{- $preload := .preload | default $defaults.preload }}
+{{- $desc_position := .desc_position | default $defaults.desc_position }}
+{{- $width := .width | default $defaults.width }}
+{{- $height := .height | default $defaults.height }}
+{{- $effect := .effect | default $defaults.effect }}
+{{- $draggable := .draggable | default $defaults.draggable }}
+{{- $zoomable := .zoomable | default $defaults.zoomable }}
 
 {{- /* Output the opening div tag with the generated attributes */}}
 <div id="{{ $div_id }}" class="{{ $div_class }}" style="{{ $div_style | safeCSS }}">

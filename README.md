@@ -3,6 +3,8 @@ A plugin for [Micro.blog](https://micro.blog "Micro.blog") for presenting a slid
 
 ![Slide](https://raw.githubusercontent.com/moonbuck/plugin-lightbox/main/slide.jpeg)
 
+***Needs updating: lightbox.js is now being built via a template using parameter values***
+
 ## GLightbox Injection
 
 The [GLightbox](https://biati-digital.github.io/glightbox/ "GLightbox") Javascript and CSS Stylesheet have been bundled into the plugin. They may be found in their respective directories beneath `static/assets`.

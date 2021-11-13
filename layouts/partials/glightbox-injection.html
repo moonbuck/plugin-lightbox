@@ -1,0 +1,6 @@
+<script type="text/javascript" src="/assets/js/glightbox.min.js"></script>
+
+{{ $template := resources.Get "js/lightbox.js" }}
+{{ $script := $template | resources.ExecuteAsTemplate "lightbox.js" . | resources.Fingerprint }}
+
+<script defer type="text/javascript" src="{{ $script.Permalink }}"></script>

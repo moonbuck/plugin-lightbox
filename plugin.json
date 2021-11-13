@@ -1,18 +1,10 @@
 {
-    "version": "8.0.0",
+    "version": "9.0.0",
     "title": "Moondeer's Lightbox",
     "description": "Another glightbox plugin, inspired by https://github.com/jsonbecker/plugin-glightbox.",
     "includes": [
         "/assets/css/glightbox.min.css",
         "/assets/css/lightbox.css",
-        "/assets/js/glightbox.min.js",
-        "/assets/js/lightbox.js"
-      ],
-    "fields": [
-      {
-        "field": "params.lightbox_default_gallery_parameters",
-        "label": "Default Gallery Parameters",
-        "placeholder": ""
-      }
-    ]
+        "glightbox-injection.html"
+      ]
   }

@@ -57,12 +57,16 @@
     {{- $version := .Config.Version -}}
     {{ printf "\n<!-- Lightbox v%s (built on %s) -->\n" $version $time | safeHTML }}
     
+    {{- $glightbox := resources.Get "js/plugin-lightbox/vendor/glightbox.min.js" -}}
+    
     {{- $source_dir := "js/plugin-lightbox/" -}}
     {{- $template_name := "lightbox.js" -}}
     {{- $source := path.Join $source_dir $template_name -}}
-    {{- $target := path.Join "assets" $source -}}
+    {{- $target := path.Join "assets" $source -}}    
+    {{- $lightbox := resources.Get $source | resources.ExecuteAsTemplate $target $ -}}
     
-    {{- $script := resources.Get $source | resources.ExecuteAsTemplate $target $ -}}
+    {{- $target = path.Join (path.Dir $target) "lightbox-bundle.js" -}}
+    {{- $script := slice $glightbox $lightbox | resources.Concat $target -}}
     {{- if .Config.MinifyScript }}{{ $script = $script | minify }}{{ end -}}
     {{- if .Config.Fingerprint }}{{ $script = $script | fingerprint }}{{ end -}}  
     

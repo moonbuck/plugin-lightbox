@@ -70,3 +70,5 @@ lightbox.on('slide_changed', ({ prev, current }) => {
 });
 
 {{- end -}}
+
+{{- end }}

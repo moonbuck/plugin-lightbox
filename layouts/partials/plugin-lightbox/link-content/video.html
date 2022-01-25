@@ -1,0 +1,8 @@
+<video playsinline 
+  {{- if .Autoplay }} autoplay muted {{ end -}}
+  {{- if .Loop }} loop{{ end -}}
+  {{- with .Src }} src="{{ . }}"{{ end -}}
+  {{- if (and .Preload (not .Autoplay)) }} preload="{{ .preload }}"{{ end -}}
+  {{- with .Class }} class="{{ . }}"{{ end -}}
+  {{- with .Style }} style="{{ .|safeCSS }}"{{ end -}}
+></video>

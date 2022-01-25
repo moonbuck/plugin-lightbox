@@ -1,0 +1,57 @@
+# Parameters for styling the galleries via the generated stylesheet.
+####################################################################
+
+# Whether the gallery slide links should wrap or be constrained 
+# to a single row. This affects the container's flex-wrap value.
+#
+Wrap = true
+
+# Class assigned to gallery containers.
+#
+GalleryClassName = 'gallery'
+
+# Sass block applied to gallery containers.
+#
+Gallery = 'gap:0px'
+
+# Class assigned to gallery links.
+#
+LinkClassName = 'gallery-link'
+
+# Sass block to apply to gallery links.
+#
+Link = '''
+height: 20vh;
+width: 20vh;
+flex-grow: 1;
+'''
+
+# Class assigned to gallery video tags.
+#
+VideoClassName = 'gallery-video'
+
+# Sass block to apply to gallery video tags.
+#
+Video = '''
+max-height: 100%;
+min-height: 100%;
+object-fit: cover;
+vertical-align: bottom
+'''
+
+# Class assigned to gallery img tags.
+#
+ImgClassName = 'gallery-image'
+
+# Sass block applied to gallery img tags.
+#
+Img = '''
+max-height: 100%;
+min-height: 100%;
+object-fit: cover;
+vertical-align: bottom
+'''
+
+# Pixel width used to fetch thumbnail images via the photos API.
+#
+PhotoWidth = 260

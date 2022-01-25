@@ -1,0 +1,156 @@
+{{- /*
+Parameters:
+  
+  Page: The page context.
+
+  Href: The URL for the slide content. This is required unless 
+        a src parameter value has been provided.
+        
+  Src: The URL for the link content. This is required unless 
+       an href parameter value has been provided.
+       
+  LinkClass: Custom class to apply to the anchor tag. 
+              Default is undefined. 'glightbox' is always applied.
+              
+  LinkStyle: Custom style to apply to the anchor tag. 
+              Default is undefined.
+              
+  Gallery: The name of the slide's gallery. Default is undefined.
+  
+  Title: The slide's title. Default is undefined.
+  
+  Description: The slide's description. Default is undefined.
+  
+  DescPosition: (bottom, top, left, right) Where the slide's 
+                 description should be positioned. Default is bottom.
+                 
+  Type: (image, video, inline?, iframe?) The slide type. 
+        Default infers from source.
+        
+  Effect: (zoom, fade, none) The animation effect the slide 
+          should use. Default is zoom.
+          
+  Width: The custom width for this slide. Default is 900px.
+  
+  Height: The custom height for this slide. Default is 506px.
+  
+  Zoomable: Whether this slide should be zoomable. Default is true.
+  
+  Draggable: Whether this slide should be draggable. Default is true.
+  
+  Sizes: Specifies image sizes for different page layouts. 
+         Default is undefined.
+         
+  Srcset: Specifies a list of image files to use in different 
+          situations. Default is undefined.
+          
+  VideoClass: Custom class to apply to the video tag. 
+               Default is undefined.
+               
+  VideoStyle: Custom style to apply to the video tag. 
+               Default is undefined.
+               
+  Loop: Whether the link video should loop. Default is true.
+  
+  Autoplay: Whether the link video should be set to autoplay. 
+            Default is true.
+            
+  Preload: Value for the link video's preload attribute. 
+           This ignored when set to autoplay. Default is undefined.
+           
+  Alt: Specifies an alternate text for an image. Default is undefined.
+  
+  ImgClass: Custom class to apply to the img tag. Default is undefined.
+  
+  ImgStyle: Custom style to apply to the img tag. Default is undefined.
+  PhotoWidth: Specifies a pixel width for a thumbnail image to be 
+              fetched using the photos API. Default is undefined.
+
+*/}}
+
+{{- /* Make sure there is a page context and a source for the link. */ -}}
+{{- if (and (or .Href .Src) .Page) }}
+
+  {{- if not (.Page.Scratch.Get "plugin-lightbox.Parameters") -}}
+    {{- partial "plugin-lightbox/load-parameters.html" .Page -}}
+  {{- end -}}
+
+  {{- $Parameters := .Page.Scratch.Get "plugin-lightbox.Parameters" -}}
+  
+  {{- $href := .Href | default .Src }}
+  {{- $src := .Src | default .Href }}
+
+  {{- $link_class := .LinkClass -}}
+  {{- if findRE `^\.[^ ]+$` $Parameters.GLightbox.Selector -}}
+    {{- $selector := replaceRE `^\.([^ ]+)$` 
+                               `$1` 
+                               $Parameters.GLightbox.Selector -}}
+    {{- $link_class = printf "%s %s" $selector $link_class | chomp -}}
+  {{- end -}}
+  
+  {{- $data_selector := replaceRE `.*(data-[^ ]+).*` 
+                                  `$1`
+                                  $Parameters.GLightbox.Selector -}}
+  
+  <a
+    {{- with $data_selector }} {{ . | safeHTMLAttr }}{{ end -}}
+    {{- with $link_class }} class="{{ . }}"{{ end -}}
+    {{- with $href }} href="{{ . }}"{{ end -}}
+    {{- with .LinkStyle }} style="{{ . | safeCSS }}"{{ end -}}
+    {{- with .Gallery }} data-gallery="{{ . }}"{{ end -}}
+    {{- with .Title }} data-title="{{ . }}"{{ end -}}
+    {{- with .Description }} data-description="{{ . }}"{{ end -}}
+    {{- with .DescPosition }} data-desc-position="{{ . }}"{{ end -}}
+    {{- with .Type }} data-type="{{ . }}"{{ end -}}
+    {{- with .Effect }} data-effect="{{ . }}"{{ end -}}
+    {{- with .Width }} data-width="{{ . }}"{{ end -}}
+    {{- with .Height }} data-height="{{ . }}"{{ end -}}
+    {{- if (isset . "Zoomable") }} data-zoomable="{{ .Zoomable }}"{{ end -}}
+    {{- with (isset . "Draggable") }} data-draggable="{{ .Draggable }}"{{ end -}}
+    {{- with .Sizes }} data-sizes="{{ . }}"{{ end -}}
+    {{- with .Srcset }} data-srcset="{{ . }}"{{ end -}}
+    > 
+    {{- if (in (slice ".mp4" ".mov" ".webm" ".ogg") (path.Ext $src))  -}}
+    
+      {{- $link_parameters := dict
+        "Page" .Page
+        "Src" $src 
+        "Class" (.VideoClass | default $Parameters.Style.VideoClassName) 
+        "Style" .VideoStyle 
+        "Loop" (.Loop | default $Parameters.Gallery.Loop)
+        "Autoplay" (.Autoplay | default $Parameters.Gallery.Autoplay)
+        "Preload" (.Preload | default $Parameters.Gallery.Preload)
+        -}}
+        
+      {{- partial "plugin-lightboxlink-content/video.html" $link_parameters -}}
+      
+    {{- else if .PhotoWidth -}}
+    
+      {{- $link_parameters := dict
+        "Page" .Page
+        "Src" $src 
+        "Alt" .Alt 
+        "Class" (.ImgClass | default $Parameters.Style.ImgClassName)
+        "Style" .ImgStyle 
+        "Width" .PhotoWidth
+        -}}
+    
+      {{- partial "link-content/img-thumbnail.html" $link_parameters -}}
+      
+    {{- else -}}
+    
+      {{- $link_parameters := dict
+        "Page" .Page
+        "Src" $src 
+        "Alt" .Alt 
+        "Class" (.ImgClass | default $Parameters.Style.ImgClassName)
+        "Style" .ImgStyle
+        -}}
+    
+      {{- partial "link-content/img.html" $link_parameters }}
+      
+    {{- end -}} {{- /* if (in (slice ".mp4" ".mov" ".webm" ".ogg") (path.Ext $src)) */ -}}
+    
+  </a>
+  
+{{- end -}} {{- /* if (and (or .Href .Src) .Page) */ -}}

@@ -1,1 +1,6 @@
-{{ partial "lightbox.html" (dict "src" (.Get "src") "photo_width" (.Get "img-width" | default "260") "gallery" (.Get "gallery") "title" (.Get "title") "description" (.Get "description") "alt" (.Get "alt")) }}
+{{- $Parameters := dict "Page" .Page "PhotoWidth" 260 -}}
+{{- range $key, $value := $.Params -}}        
+  {{- $key = $key | humanize | title | replaceRE " " "" -}}
+  {{- $Parameters = merge $Parameters (dict $key $value) -}}
+{{- end -}}
+{{ partial "lightbox.html" $Parameters }}

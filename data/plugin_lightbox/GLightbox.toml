@@ -1,67 +1,32 @@
-# Whether to generate events for analytical consumption. When this
-# is true, the following code is added when the lightbox instance
-# gets created:
-#
-# lightbox.on('open', () => {
-#   if (typeof dataLayer === 'undefined') { return; }
-#   dataLayer.push({'event': 'lightbox_opened'});
-# });
-#
-# lightbox.on('close', () => {
-#   if (typeof dataLayer === 'undefined') { return; }
-#   dataLayer.push({'event': 'lightbox_closed'});
-# });
-#
-# lightbox.on('slide_changed', ({ prev, current }) => {
-#
-#   if (typeof dataLayer === 'undefined') { return; }
-#
-#   // Prev and current are objects that contain the following data
-#   // const { slideIndex, slideNode, slideConfig, player, trigger } = current;
-#   let event = 'lightbox_slide_changed';
-#   let title = current.slideConfig.title;
-#   let alt = current.slideConfig.alt;
-#   let description = current.slideConfig.description;
-#   let type = current.slideConfig.type;
-#
-#   dataLayer.push({'event': event,
-#                   'slide_title': title,
-#                   'art_piece':title,
-#                   'slide_alt': alt,
-#                   'slide_description': description,
-#                   'slide_type': type});
-#  
-# });
-#
-# Note: This value ranks lower than the plugin parameter value when both are present.
-#
-GenerateEvents = false
+# Parameters corresponding to those receivable by the
+# glightbox Javascript object.
+#####################################################
 
 # Name of the selector for example '.glightbox' or 'data-glightbox' 
 # or '*[data-glightbox]'
 #
-Selector = ".glightbox"
+Selector = '.glightbox'
 
 # Name of the skin, it will add a class to the lightbox so you 
 # can style it with css.
 #
-Skin = "clean"
+Skin = 'clean'
 
 # Name of the effect on lightbox open. (zoom, fade, none)
 #
-OpenEffect = "zoom"
+OpenEffect = 'zoom'
 
 # Name of the effect on lightbox close. (zoom, fade, none)
 #
-CloseEffect = "zoom"
+CloseEffect = 'zoom'
 
 # Name of the effect on slide change. (slide, fade, zoom, none)
 #
-SlideEffect = "slide"
+SlideEffect = 'slide'
 
 # More text for descriptions on mobile devices.
 #
-MoreText = "See more"
+MoreText = 'See more'
 
 # Number of characters to display on the description before adding
 # the moreText link (only for mobiles), if 0 it will display the
@@ -97,23 +62,23 @@ StartAt = 0
 # specific size on each slide. You can use any unit for example 
 # 90% or 100vw for full width
 #
-Width = "900px"
+Width = '900px'
 
 # Default height for inline elements and iframes, you can define
 # a specific size on each slide.You can use any unit for example
 # 90% or 100vw For inline elements you can set the height to auto.
 #
-Height = "506px"
+Height = '506px'
 
 # Default width for videos. Videos are responsive so height is not
 # required. The width can be in px % or even vw for example, 500px,
 # 90% or 100vw for full width videos
-VideosWidth = "960px"
+VideosWidth = '960px'
 
 # Global position for slides description, you can define a 
 # specific position on each slide (bottom, top, left, right).
 #
-# DescPosition = "bottom"
+DescPosition = 'bottom'
 
 # Loop slides on end.
 #
@@ -148,17 +113,6 @@ DragAutoSnap = false
 # Enable or disable preloading.
 #
 Preload = true
-
-# Set your own svg icons.
-#
-# SVG = '{}'
-
-# Define or adjust lightbox animations.
-#
-# See the custom animation section of the README:
-# https://github.com/biati-digital/glightbox#adding-a-custom-animation
-#
-# CSSEfects = '{}'
 
 # You can completely change the html of GLightbox. See the 
 # Themeable section in the README:
@@ -209,33 +163,38 @@ AutoplayVideos =  true
 # next arrows to change slide so use it only if you know 
 # what you are doing.
 #
-# AutofocusVideos = false
+AutofocusVideos = false
+
+# Set your own svg icons.
+#
+[SVG]
+
+# Define or adjust lightbox animations.
+#
+# See the custom animation section of the README:
+# https://github.com/biati-digital/glightbox#adding-a-custom-animation
+#
+[CSSEfects]
 
 # Video player options. See the video player options in
 # the README: https://github.com/biati-digital/glightbox#video-player
 #
-# The example given in the README looks like
+# The example given in the README would look like
 # this:
-# {
-#     css: 'https://cdn.plyr.io/3.5.6/plyr.css',
-#     js: 'https://cdn.plyr.io/3.5.6/plyr.js',
-#     config: {
-#       ratio: '16:9', // or '4:3'
-#       muted: false,
-#       hideControls: true,
-#       youtube: {
-#         noCookie: true,
-#         rel: 0,
-#         showinfo: 0,
-#         iv_load_policy: 3
-#       },
-#       vimeo: {
-#         byline: false,
-#         portrait: false,
-#         title: false,
-#         speed: true,
-#         transparent: false
-#       }
-#     }
-#   }
-# Plyr = '{}'
+# [Plyr]
+# css = 'https://cdn.plyr.io/3.5.6/plyr.css'
+# js = 'https://cdn.plyr.io/3.5.6/plyr.js'
+# config.ratio = '16:9' # or '4:3'
+# config.muted = false
+# config.hideControls = true
+# config.youtube.noCookie = true
+# config.youtube.rel = 0
+# config.youtube.showinfo = 0
+# config.youtube.iv_load_policy = 3
+# config.vimeo.byline = false
+# config.vimeo.portrait = false
+# config.vimeo.title = false
+# config.vimeo.speed = true
+# config.vimeo.transparent = false
+#
+[Plyr]

@@ -1,0 +1,5 @@
+<img
+  {{- if (and .Width .Src) }} src="https://micro.blog/photos/{{ .Width }}x/{{ .Src }}"{{ end -}}
+  {{- with .Alt}} alt="{{ . }}"{{ end -}}
+  {{- with .Class}} class="{{ . }}"{{ end -}}
+  {{- if .Width }} style="width:{{ .Width }}px;height:auto;max-width:100%{{ with .Style }};{{ . | safeCSS }}{{ end }}"{{ end -}} />

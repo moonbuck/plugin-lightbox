@@ -17,10 +17,11 @@ gallery partial.
   {{- range findRE "[!][[][^]]*[]][(][^)]+[)]" . -}}
     {{- $src := index (findRE "http[^)]+" .) 0 -}}
     {{- $title := replaceRE "[!][[]([^]]*)[]].+" "$1" . -}}
-    {{- $slide := dict "title" $title "src" $src -}}
+    {{- $slide := dict "Title" $title "Src" $src -}}
     {{- $slides = $slides | append $slide -}}  
   {{- end -}}
 
+  <p>slides = {{ $slides | jsonify | safeHTML }}</p>
   {{- if $slides -}}
   
     {{- $Parameters := dict "Page" $.Page "Slides" $slides -}}
@@ -43,7 +44,7 @@ gallery partial.
     
     {{- end -}} {{/* if not .IsNamedParams */}}
     
-    {{- partial "gallery.html" $Parameters -}}
+    {{- partial "plugin-gallery/gallery.html" $Parameters -}}
   
   {{- end -}} {{/* if $slides */}}
 

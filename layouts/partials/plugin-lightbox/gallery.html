@@ -56,10 +56,11 @@ Parameters:
     {{- partial "plugin-lightbox/load-parameters" .Page -}}
   {{- end -}}
   
-  {{- $Parameters := .Scratch.Get "plugin-lightbox.Parameters" -}}
+  {{- $Parameters := .Page.Scratch.Get "plugin-lightbox.Parameters" -}}
   
   {{- /* Generate the style, id, and class attributes for the div */}}
   {{- $wrap := .Wrap | default $Parameters.Style.Wrap -}}
+  {{- $wrap = cond (eq "true" ($wrap | string)) "wrap" "nowrap" -}}
   {{- $div_style := printf "display: flex; flex-wrap: %s;" $wrap -}}
   {{- with (.GalleryStyle | default $Parameters.Style.Gallery) -}}
     {{ $div_style = printf "%s %s" $div_style . -}}
@@ -67,7 +68,7 @@ Parameters:
   
   {{- $div_id := .Gallery | anchorize }}
   
-  {{- $div_class := $Parameters.Style.GalleryClass }}
+  {{- $div_class := $Parameters.Style.GalleryClassName }}
   {{- with .GalleryClass -}}
   {{- $div_class = printf "%s %s" $div_class (delimit (apply (split . " ") "anchorize" ".") " ") -}}
   {{- end -}}
@@ -104,6 +105,7 @@ Parameters:
   
   {{- $gallery_defaults := dict
     "Page" .Page
+    "Gallery" .Gallery
     "PhotoWidth" $photo_width
     "LinkStyle" $link_style
     "ImgStyle" $img_style
@@ -128,7 +130,7 @@ Parameters:
     {{- $lightbox_parameters := merge $gallery_defaults . -}}
     
     {{- /* Invoke the lightbox partial to generate the slide */}}
-    {{- partial "lightbox.html" $lightbox_parameters }}
+    {{- partial "plugin-lightbox/lightbox.html" $lightbox_parameters }}
   
     {{- end }}
 </div>

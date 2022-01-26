@@ -21,7 +21,6 @@ gallery partial.
     {{- $slides = $slides | append $slide -}}  
   {{- end -}}
 
-  <p>slides = {{ $slides | jsonify | safeHTML }}</p>
   {{- if $slides -}}
   
     {{- $Parameters := dict "Page" $.Page "Slides" $slides -}}

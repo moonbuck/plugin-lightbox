@@ -67,9 +67,6 @@ Parameters:
               fetched using the photos API. Default is undefined.
 
 */}}
-<p>Href = {{ .Href }}</p>
-<p>Src = {{ .Src }}</p>
-<p>Page = {{ .Page }}</p>
 
 {{- /* Make sure there is a page context and a source for the link. */ -}}
 {{- if (and (or .Href .Src) .Page) }}
@@ -97,24 +94,6 @@ Parameters:
                                     `$1`
                                     $Parameters.GLightbox.Selector -}}
   {{- end -}}
-  
-  <p>data_selector = {{ $data_selector }}</p>
-  <p>link_class = {{ $link_class }}</p>
-  <p>href = {{ $href }}</p>
-  <p>LinkStyle = {{ .LinkStyle }}</p>
-  <p>Gallery = {{ .Gallery }}</p>
-  <p>Title = {{ .Title }}</p>
-  <p>Description = {{ .Description }}</p>
-  <p>DescPosition = {{ .DescPosition }}</p>
-  <p>Type = {{ .Type }}</p>
-  <p>Effect = {{ .Effect }}</p>
-  <p>Width = {{ .Width }}</p>
-  <p>Height = {{ .Height }}</p>
-  <p>Zoomable = {{ .Zoomable }}</p>
-  <p>Draggable = {{ .Draggable }}</p>
-  <p>Sizes = {{ .Sizes }}</p>
-  <p>Srcset = {{ .Srcset }}</p>
-  <p>src = {{ $src }}</p>
   <a
     {{- with $data_selector }} {{ . | safeHTMLAttr }}{{ end -}}
     {{- with $link_class }} class="{{ . }}"{{ end -}}
@@ -128,8 +107,12 @@ Parameters:
     {{- with .Effect }} data-effect="{{ . }}"{{ end -}}
     {{- with .Width }} data-width="{{ . }}"{{ end -}}
     {{- with .Height }} data-height="{{ . }}"{{ end -}}
-    {{- if (isset . "Zoomable") }} data-zoomable="{{ .Zoomable }}"{{ end -}}
-    {{- with (isset . "Draggable") }} data-draggable="{{ .Draggable }}"{{ end -}}
+    {{- if (isset . "Zoomable") -}}
+    data-zoomable="{{ .Zoomable }}"
+    {{- end -}}
+    {{- if (isset . "Draggable") -}}
+    data-draggable="{{ .Draggable }}"
+    {{- end -}}
     {{- with .Sizes }} data-sizes="{{ . }}"{{ end -}}
     {{- with .Srcset }} data-srcset="{{ . }}"{{ end -}}
     > 

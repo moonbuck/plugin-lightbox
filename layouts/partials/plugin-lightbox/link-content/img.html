@@ -21,6 +21,6 @@
 <img
   {{- with .Src }} src="{{ . }}"{{ end -}}
   {{- with .Alt }} alt="{{ . }}"{{ end -}}
-  {{- with .Class }} class="{{ . }}"{{ end -}}
+  {{- with $Class }} class="{{ . }}"{{ end -}}
   {{- with .Style }} style="{{ . | safeCSS }}"{{ end -}}
 />

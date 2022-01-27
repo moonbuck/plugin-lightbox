@@ -1,52 +1,35 @@
 {{- /*
-Parameters:
-
-  Page: The page context.
-
-  Wrap: Whether the gallery links should wrap as needed.
   
-  GalleryClass: Custom class to apply to the div.
+  Required Parameters:
+    Page: The page context.
+    Gallery: The name of the gallery. This is required.
+    Slides: The map of slide data.
   
-  GalleryStyle: Custom style to apply to the div.
-  
-  LinkClass: Custom class to apply to all anchor tags.
-  
-  LinkStyle: Custom style to apply to all anchor tags.
-  
-  Gallery: The name of the gallery. This is required.
-  
-  DescPosition: (bottom, top, left, right) Where all slides 
-                descriptions should be positioned.
-  
-  Effect: (zoom, fade, none) The animation effect all slide should use.
-  
-  Width: The custom width for all slides.
-  
-  Height: The custom height for all slides.
-  
-  Zoomable: Whether slides should be zoomable.
-  
-  Draggable: Whether slides should be draggable.
-  
-  VideoClass: Custom class to apply to all video tags.
-  
-  VideoStyle: Custom style to apply to all video tags.
-  
-  Loop: Whether link videos should loop.
-  
-  Autoplay: Whether link videos should be set to autoplay.
-  
-  Preload: Value for link video preload attributes.
-  
-  ImgClass: Custom class to apply to all img tags.
-  
-  ImgStyle: Custom style to apply to all img tags.
-  
-  PhotoWidth: Specifies a pixel width for a thumbnail image to be 
-              fetched using the photos API. Default is undefined.
-
-  Slides: The map of slide data.
-
+  Optional Parameters:
+    GridWidth: The number of grid cells per row.
+    RowHeight: The height of each row.
+    Fit: (contain or cover) The fit for images and videos.
+    GalleryClass: Custom class to apply to the div.
+    GalleryStyle: Custom style to apply to the div.
+    LinkClass: Custom class to apply to all anchor tags.
+    LinkStyle: Custom style to apply to all anchor tags.
+    DescPosition: (bottom, top, left, right) Where all slides 
+                  descriptions should be positioned.
+    Effect: (zoom, fade, none) The animation effect all slide should use.
+    Width: The custom width for all slides.
+    Height: The custom height for all slides.
+    Zoomable: Whether slides should be zoomable.
+    Draggable: Whether slides should be draggable.
+    VideoClass: Custom class to apply to all video tags.
+    VideoStyle: Custom style to apply to all video tags.
+    Loop: Whether link videos should loop.
+    Autoplay: Whether link videos should be set to autoplay.
+    Preload: Value for link video preload attributes.
+    ImgClass: Custom class to apply to all img tags.
+    ImgStyle: Custom style to apply to all img tags.
+    PhotoWidth: Specifies a pixel width for a thumbnail image to be 
+                fetched using the photos API. Default is undefined.
+              
 */}}
 
 {{- /* Check we have what we need to start */}}
@@ -57,82 +40,36 @@ Parameters:
   {{- end -}}
   
   {{- $Parameters := .Page.Scratch.Get "plugin-lightbox.Parameters" -}}
-  
-  {{- /* Generate the style, id, and class attributes for the div */}}
-  {{- $wrap := .Wrap | default $Parameters.Style.Wrap -}}
-  {{- $wrap = cond (eq "true" ($wrap | string)) "wrap" "nowrap" -}}
-  {{- $div_style := printf "display: flex; flex-wrap: %s;" $wrap -}}
-  {{- with (.GalleryStyle | default $Parameters.Style.Gallery) -}}
-    {{ $div_style = printf "%s %s" $div_style . -}}
-  {{- end -}}
-  
-  {{- $div_id := .Gallery | anchorize }}
-  
-  {{- $div_class := $Parameters.Style.GalleryClassName }}
-  {{- with .GalleryClass -}}
-  {{- $div_class = printf "%s %s" $div_class (delimit (apply (split . " ") "anchorize" ".") " ") -}}
-  {{- end -}}
-  
-  {{- /* Capture optional parameter values shared by all slides before context switches */}}
-  {{- $link_class := $Parameters.Style.LinkClassName }}
-  {{- with .LinkClass }}
-  {{- $link_class = printf "%s %s" $link_class (delimit (apply (split . " ") "anchorize" ".") " ") }}
-  {{- end }}
-  
-  {{- $img_class := $Parameters.Style.ImgClassName }}
-  {{- with .ImgClass }}
-  {{- $img_class = printf "%s %s" $img_class (delimit (apply (split . " ") "anchorize" ".") " ") }}
-  {{- end }}
-  
-  {{- $video_class := $Parameters.Style.VideoClassName }}
-  {{- with .VideoClass }}
-  {{- $video_class = printf "%s %s" $video_class (delimit (apply (split . " ") "anchorize" ".") " ") }}
-  {{- end }}
-  
-  {{- $photo_width := .PhotoWidth | default $Parameters.Style.PhotoWidth }}
-  {{- $link_style := .LinkStyle }}
-  {{- $img_style := .ImgStyle  }}
-  {{- $video_style := .VideoStyle }}
-  {{- $loop := .Loop | default $Parameters.Gallery.Loop }}
-  {{- $autoplay := .Autoplay | default $Parameters.Gallery.Autoplay }}
-  {{- $preload := .Preload | default $Parameters.Gallery.Preload }}
-  {{- $desc_position := .DescPosition }}
-  {{- $width := .Width }}
-  {{- $height := .Height }}
-  {{- $effect := .Effect }}
-  {{- $draggable := .Draggable }}
-  {{- $zoomable := .Zoomable }}
-  
-  {{- $gallery_defaults := dict
-    "Page" .Page
-    "Gallery" .Gallery
-    "PhotoWidth" $photo_width
-    "LinkStyle" $link_style
-    "ImgStyle" $img_style
-    "VideoStyle" $video_style
-    "Loop" $loop
-    "Autoplay" $autoplay
-    "Preload" $preload
-    "DescPosition" $desc_position
-    "Width" $width
-    "Height" $height
-    "Effect" $effect
-    "Draggable" $draggable
-    "Zoomable" $zoomable
-    -}}
-  
-  {{- /* Output the opening div tag with the generated attributes */}}
-<div id="{{ $div_id }}" class="{{ $div_class }}" style="{{ $div_style | safeCSS }}">
-  
-  {{- /* Iterate over the individual slides */}}
-  {{- range .Slides }}
-  
-    {{- $lightbox_parameters := merge $gallery_defaults . -}}
     
-    {{- /* Invoke the lightbox partial to generate the slide */}}
-    {{- partial "plugin-lightbox/lightbox.html" $lightbox_parameters }}
+  {{- $GalleryClass := $Parameters.Style.GalleryClassName -}}
+  {{- with .GalleryClass -}}
+  {{- $GalleryClass = printf "%s %s" $GalleryClass (delimit (apply (split . " ") 
+                                                                   "anchorize" 
+                                                                   ".") 
+                                                            " ") -}}
+  {{- end -}}
+    
+  {{- $GalleryStyle := "" -}}
+    {{- with .GridWidth -}}
+      {{- $GalleryStyle = printf "grid-template-columns: repeat(%v, 1fr);" . -}}
+    {{- end -}}
+    {{- with .RowHeight -}}
+      {{- $GalleryStyle = printf "%sgrid-auto-rows: %s;" $GalleryStyle . -}}
+    {{- end -}}
+    {{- with .GalleryStyle | default $Parameters.Style.Gallery -}}
+      {{- $GalleryStyle = printf "%s%s" $GalleryStyle . -}}
+    {{- end -}}
+    
+    
+<div 
+  {{- with .Gallery }} id="{{ . | anchorize }}"{{ end -}}
+  {{- with $GalleryClass }} class="{{ . }}"{{ end -}}
+  {{- with $GalleryStyle }} style="{{ . | safeCSS }}"{{ end -}}>
   
-    {{- end }}
+  {{- /* Invoke the lightbox partial for each slide. */}}
+  {{- range .Slides }}
+    {{- partial "plugin-lightbox/lightbox.html" (merge $ .) }}  
+  {{- end }}
 </div>
   
 {{- end -}}

@@ -65,6 +65,7 @@ Parameters:
   ImgStyle: Custom style to apply to the img tag. Default is undefined.
   PhotoWidth: Specifies a pixel width for a thumbnail image to be 
               fetched using the photos API. Default is undefined.
+  Fit: (contain or cover) The object-fit value for the image / video.
 
 */}}
 
@@ -72,32 +73,40 @@ Parameters:
 {{- if (and (or .Href .Src) .Page) }}
 
   {{- if not (.Page.Scratch.Get "plugin-lightbox.Parameters") -}}
-    {{- partial "plugin-lightbox/load-parameters.html" .Page -}}
+    {{- partial "plugin-lightbox/load-parameters" .Page -}}
   {{- end -}}
-
+  
   {{- $Parameters := .Page.Scratch.Get "plugin-lightbox.Parameters" -}}
   
-  {{- $href := .Href | default .Src }}
-  {{- $src := .Src | default .Href }}
-
-  {{- $link_class := .LinkClass -}}
+  {{- /* Resolve the class to assign the link. */ -}}
+  {{- $LinkClass := $Parameters.Style.LinkClassName -}}
+  {{- with .LinkClass -}}
+  {{- $LinkClass = printf "%s %s" $LinkClass (delimit (apply (split . " ") 
+                                                             "anchorize" 
+                                                             ".") 
+                                                      " ") -}}
+  {{- end -}}
   {{- if findRE `^\.[^ ]+$` $Parameters.GLightbox.Selector -}}
     {{- $selector := replaceRE `^\.([^ ]+)$` 
                                `$1` 
                                $Parameters.GLightbox.Selector -}}
-    {{- $link_class = printf "%s %s" $selector $link_class | chomp -}}
+    {{- $LinkClass = printf "%s %s" $selector $LinkClass | chomp -}}
   {{- end -}}
+    
+  {{- $Href := .Href | default .Src }}
+  {{- $Src := .Src | default .Href }}
   
-  {{- $data_selector := "" -}}
+  {{- $DataSelector := "" -}}
   {{- if findRE `^.*data-[^ ]+.*$` $Parameters.GLightbox.Selector -}}
-    {{- $data_selector := replaceRE `^.*(data-[^ ]+).*$` 
-                                    `$1`
-                                    $Parameters.GLightbox.Selector -}}
+    {{- $DataSelector = replaceRE `^.*(data-[^ ]+).*$` 
+                                  `$1`
+                                  $Parameters.GLightbox.Selector -}}
   {{- end -}}
+    
   <a
-    {{- with $data_selector }} {{ . | safeHTMLAttr }}{{ end -}}
-    {{- with $link_class }} class="{{ . }}"{{ end -}}
-    {{- with $href }} href="{{ . }}"{{ end -}}
+    {{- with $DataSelector }} {{ . | safeHTMLAttr }}{{ end -}}
+    {{- with $LinkClass }} class="{{ . }}"{{ end -}}
+    {{- with $Href }} href="{{ . }}"{{ end -}}
     {{- with .LinkStyle }} style="{{ . | safeCSS }}"{{ end -}}
     {{- with .Gallery }} data-gallery="{{ . }}"{{ end -}}
     {{- with .Title }} data-title="{{ . }}"{{ end -}}
@@ -118,42 +127,66 @@ Parameters:
     > 
     {{- if (in (slice ".mp4" ".mov" ".webm" ".ogg") (path.Ext $src))  -}}
     
-      {{- $link_parameters := dict
-        "Page" .Page
-        "Src" $src 
-        "Class" (.VideoClass | default $Parameters.Style.VideoClassName) 
-        "Style" .VideoStyle 
-        "Loop" (.Loop | default $Parameters.Gallery.Loop)
-        "Autoplay" (.Autoplay | default $Parameters.Gallery.Autoplay)
-        "Preload" (.Preload | default $Parameters.Gallery.Preload)
-        -}}
-        
-      {{- partial "plugin-lightbox/link-content/video.html" $link_parameters -}}
+    {{- $parameters := dict "Page" .Page "Src" $src -}}
+    {{- with .VideoClass -}}
+      {{- $parameters = merge $parameters (dict "Class" .) -}}
+    {{- end -}}
+    {{- with .VideoStyle -}}
+      {{- $parameters = merge $parameters (dict "Style" .) -}}
+    {{- end -}}
+    {{- if (isset . "Loop") -}}
+      {{- $parameters = merge $parameters (dict "Loop" .Loop) -}}
+    {{- end -}}
+    {{- if (isset . "Autoplay") -}}
+      {{- $parameters = merge $parameters (dict "Autoplay" .Autoplay) -}}
+    {{- end -}}
+    {{- with .Preload -}}
+      {{- $parameters = merge $parameters (dict "Preload" .) -}}
+    {{- end -}}
+    {{- with .Fit -}}
+      {{- $parameters = merge $parameters (dict "Fit" .) -}}
+    {{- end -}}
+    
+      {{- partial "plugin-lightbox/link-content/video.html" $parameters -}}
       
     {{- else if .PhotoWidth -}}
     
-      {{- $link_parameters := dict
-        "Page" .Page
-        "Src" $src 
-        "Alt" .Alt 
-        "Class" (.ImgClass | default $Parameters.Style.ImgClassName)
-        "Style" .ImgStyle 
-        "Width" .PhotoWidth
-        -}}
+    {{- parameters := dict "Page" .Page "Src" $src -}}
+    {{- with .Alt -}}
+      {{- $parameters = merge $parameters (dict "Alt" .) -}}
+    {{- end -}}
+    {{- with .ImgClass -}}
+      {{- $parameters = merge $parameters (dict "Class" .) -}}
+    {{- end -}}
+    {{- with .ImgStyle -}}
+      {{- $parameters = merge $parameters (dict "Style" .) -}}
+    {{- end -}}
+    {{- with .PhotoWidth -}}
+      {{- $parameters = merge $parameters (dict "Width" .) -}}
+    {{- end -}}
+    {{- with .Fit -}}
+      {{- $parameters = merge $parameters (dict "Fit" .) -}}
+    {{- end -}}
     
-      {{- partial "plugin-lightbox/link-content/img-thumbnail.html" $link_parameters -}}
+      {{- partial "plugin-lightbox/link-content/img-thumbnail.html" $parameters -}}
       
     {{- else -}}
     
-      {{- $link_parameters := dict
-        "Page" .Page
-        "Src" $src 
-        "Alt" .Alt 
-        "Class" (.ImgClass | default $Parameters.Style.ImgClassName)
-        "Style" .ImgStyle
-        -}}
+    {{- parameters := dict "Page" .Page "Src" $src -}}
+    {{- with .Alt -}}
+      {{- $parameters = merge $parameters (dict "Alt" .) -}}
+    {{- end -}}
+    {{- with .ImgClass -}}
+      {{- $parameters = merge $parameters (dict "Class" .) -}}
+    {{- end -}}
+    {{- with .ImgStyle -}}
+      {{- $parameters = merge $parameters (dict "Style" .) -}}
+    {{- end -}}
+    {{- with .Fit -}}
+      {{- $parameters = merge $parameters (dict "Fit" .) -}}
+    {{- end -}}
     
-      {{- partial "plugin-lightbox/link-content/img.html" $link_parameters }}
+      {{- partial "plugin-lightbox/link-content/img.html" $parameters }}
       
     {{- end -}} {{- /* if (in (slice ".mp4" ".mov" ".webm" ".ogg") (path.Ext $src)) */ -}}
     

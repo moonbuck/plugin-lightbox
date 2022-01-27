@@ -1,38 +1,13 @@
 {{- with .Scratch.Get "plugin-lightbox.Parameters" -}}
 
-  {{- $settings := dict
-    "selector" .GLightbox.Selector
-    "skin" .GLightbox.Skin
-    "openEffect" .GLightbox.OpenEffect
-    "closeEffect" .GLightbox.CloseEffect
-    "slideEffect" .GLightbox.SlideEffect
-    "moreText" .GLightbox.MoreText
-    "moreLength" .GLightbox.MoreLength
-    "closeButton" .GLightbox.CloseButton
-    "touchNavigation" .GLightbox.TouchNavigation
-    "touchFollowAxis" .GLightbox.TouchFollowAxis
-    "keyboardNavigation" .GLightbox.KeyboardNavigation
-    "closeOnOutsideClick" .GLightbox.CloseOnOutsideClick
-    "startAt" .GLightbox.StartAt
-    "width" .GLightbox.Width
-    "height" .GLightbox.Height
-    "videosWidth" .GLightbox.VideosWidth
-    "descPosition" .GLightbox.DescPosition
-    "loop" .GLightbox.Loop
-    "zoomable" .GLightbox.Zoomable
-    "draggable" .GLightbox.Draggable
-    "dragToleranceX" .GLightbox.DragToleranceX
-    "dragToleranceY" .GLightbox.DragToleranceY
-    "dragAutoSnap" .GLightbox.DragAutoSnap
-    "Preload" .GLightbox.Preload
-    "svg" .GLightbox.SVG
-    "cssEfects" .GLightbox.CSSEfects
-    "lightboxHTML" .GLightbox.LightboxHTML
-    "slideHTML" .GLightbox.SlideHTML
-    "autoplayVideos" .GLightbox.AutoplayVideos
-    "autofocusVideos" .GLightbox.AutofocusVideos
-    "plyr" .GLightbox.Plyr
-    -}}
+  {{- $settings := dict -}}
+    
+    {{- range $key, $value := .GLightbox -}}
+      {{- $key = printf "%s%s" (substr $key 0 1 | lower) (substr $key 1) -}}
+      {{- with $value -}}
+        {{- $settings = merge $settings (dict $key .) -}}
+      {{- end -}}
+    {{- end -}}
 
 const lightbox = GLightbox({{ $settings | jsonify | safeJS }});
 

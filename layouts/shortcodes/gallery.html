@@ -28,10 +28,8 @@ gallery partial.
     {{- /* Handle positional parameter invocation. */ -}}
     {{- if not $.IsNamedParams -}}
     
-      {{- /* TODO: refactor hardcoded wrap value here. */ -}}
       {{- /* Gallery name should be passed as first parameter */ -}}  
-      {{- $Parameters = merge $Parameters 
-                              (dict "Gallery" ($.Get 0) "Wrap" "nowrap") -}}
+      {{- $Parameters = merge $Parameters (dict "Gallery" ($.Get 0)) -}}
                             
     {{- /* Otherwise, parse named parameters */ -}}
     {{- else -}}

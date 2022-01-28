@@ -8,6 +8,8 @@
   Optional Parameters:
     GridWidth: The number of grid cells per row.
     RowHeight: The height of each row.
+    RowCount: The maximum number of rows. Ignored when GridWidth
+              has been provided.
     Fit: (contain or cover) The fit for images and videos.
     GalleryClass: Custom class to apply to the div.
     GalleryStyle: Custom style to apply to the div.
@@ -41,6 +43,7 @@
   
   {{- $Parameters := .Page.Scratch.Get "plugin-lightbox.Parameters" -}}
     
+  {{- /* Resolve the class for the <div> */ -}}
   {{- $GalleryClass := $Parameters.Style.GalleryClassName -}}
   {{- with .GalleryClass -}}
   {{- $GalleryClass = printf "%s %s" $GalleryClass (delimit (apply (split . " ") 
@@ -49,13 +52,25 @@
                                                             " ") -}}
   {{- end -}}
     
+  {{- /* Resolve the inline style for the <div> */ -}}
   {{- $GalleryStyle := "" -}}
-    {{- with .GridWidth -}}
-      {{- $GalleryStyle = printf "grid-template-columns: repeat(%v, 1fr);" . -}}
+  
+    {{- /* Check whether a column count has been provided.  */ -}}
+    {{- if .GridWidth -}}
+      {{- $GalleryStyle = printf "grid-template-columns: repeat(%v, 1fr);" .GridWidth -}}
+      
+    {{- /* Otherwise, check for a row count. */ -}}
+    {{- else if .RowCount -}}
+      {{- $grid_width := math.Max 1 (div (len .Slides) .RowCount) -}}
+      {{- $GalleryStyle = printf "grid-template-columns: repeat(%v, 1fr);" $grid_width -}}
     {{- end -}}
+    
+    {{- /* Check for a specified height for the rows. */ -}}
     {{- with .RowHeight -}}
       {{- $GalleryStyle = printf "%sgrid-auto-rows: %s;" $GalleryStyle . -}}
     {{- end -}}
+    
+    {{- /* Check whether a custom CSS has been provided. */ -}}
     {{- with .GalleryStyle | default $Parameters.Style.Gallery -}}
       {{- $GalleryStyle = printf "%s%s" $GalleryStyle . -}}
     {{- end -}}

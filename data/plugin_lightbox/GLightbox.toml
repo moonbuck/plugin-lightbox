@@ -5,7 +5,7 @@
 # Name of the selector for example '.glightbox' or 'data-glightbox' 
 # or '*[data-glightbox]'
 #
-# Selector = '.glightbox'
+Selector = '.glightbox'
 
 # Name of the skin, it will add a class to the lightbox so you 
 # can style it with css.

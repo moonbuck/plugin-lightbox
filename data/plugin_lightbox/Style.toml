@@ -14,7 +14,7 @@ GridWidth = 5
 #
 RowHeight = '20vh'
 
-# Sass block applied to gallery containers.
+# Sass (or CSS) block applied to gallery containers.
 #
 Gallery = ''
 
@@ -22,7 +22,7 @@ Gallery = ''
 #
 LinkClassName = 'gallery-link'
 
-# Sass block to apply to gallery links.
+# Sass (or CSS) block to apply to gallery links.
 #
 Link = ''
 
@@ -30,7 +30,7 @@ Link = ''
 #
 VideoClassName = 'gallery-video'
 
-# Sass block to apply to gallery video tags.
+# Sass (or CSS) block to apply to gallery video tags.
 #
 Video = ''
 
@@ -38,7 +38,7 @@ Video = ''
 #
 ImgClassName = 'gallery-image'
 
-# Sass block applied to gallery img tags.
+# Sass (or CSS) block applied to gallery img tags.
 #
 Img = ''
 

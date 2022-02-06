@@ -28,6 +28,8 @@
   display: grid;
   grid-template-columns: repeat({{ .Style.GridWidth }}, 1fr);
   grid-auto-rows: {{ .Style.RowHeight }};
+  @include margin-bottom(2rem);
+  @include margin-top(2rem);
   {{ with .Style.Gallery }}{{ template "rfs-wrap" . }}{{ end }}
 }
 

@@ -9,40 +9,52 @@ gallery partial.
 
 */ -}}
 
-{{- with .Inner -}}
+{{- $slides := slice -}}
+  
+{{- if .Inner -}}
 
-  {{- $slides := slice -}}
 
   {{/* Parse out markdown image declarations */}}
-  {{- range findRE "[!][[][^]]*[]][(][^)]+[)]" . -}}
+  {{- range findRE "[!][[][^]]*[]][(][^)]+[)]" .Inner -}}
     {{- $src := index (findRE "http[^)]+" .) 0 -}}
     {{- $title := replaceRE "[!][[]([^]]*)[]].+" "$1" . -}}
     {{- $slide := dict "Title" $title "Src" $src -}}
     {{- $slides = $slides | append $slide -}}  
   {{- end -}}
 
-  {{- if $slides -}}
-  
-    {{- $Parameters := dict "Page" $.Page "Slides" $slides -}}
-  
-    {{- /* Handle positional parameter invocation. */ -}}
-    {{- if not $.IsNamedParams -}}
-    
-      {{- /* Gallery name should be passed as first parameter */ -}}  
-      {{- $Parameters = merge $Parameters (dict "Gallery" ($.Get 0)) -}}
-                            
-    {{- /* Otherwise, parse named parameters */ -}}
-    {{- else -}}
-      
-      {{- range $key, $value := $.Params -}}        
-        {{- $key = $key | humanize | title | replaceRE " " "" -}}
-        {{- $Parameters = merge $Parameters (dict $key $value) -}}
-      {{- end -}}
-    
-    {{- end -}} {{/* if not .IsNamedParams */}}
-    
-    {{- partial "plugin-lightbox/gallery.html" $Parameters -}}
-  
-  {{- end -}} {{/* if $slides */}}
+{{- else if .Get "slides" -}}
 
+  {{- with transform.Unmarshal (.Get "slides") -}}
+    {{- if reflect.IsSlice . -}}
+      {{- $slides = . -}}
+    {{- end -}}  
+  {{- end -}}
+  
 {{- end -}} {{/* with .Inner */}}
+
+{{- if $slides -}}
+
+  {{- $Parameters := dict -}}
+
+  {{- /* Handle positional parameter invocation. */ -}}
+  {{- if not $.IsNamedParams -}}
+  
+    {{- /* Gallery name should be passed as first parameter */ -}}  
+    {{- $Parameters = merge $Parameters (dict "Gallery" ($.Get 0)) -}}
+                          
+  {{- /* Otherwise, parse named parameters */ -}}
+  {{- else -}}
+    
+    {{- range $key, $value := $.Params -}}        
+      {{- $key = $key | humanize | title | replaceRE " " "" -}}
+      {{- $Parameters = merge $Parameters (dict $key $value) -}}
+    {{- end -}}
+  
+  {{- end -}} {{/* if not .IsNamedParams */}}
+  
+  {{- $Parameters = merge $Parameters (dict "Page" $.Page "Slides" $slides) -}}
+    
+  
+  {{- partial "plugin-lightbox/gallery.html" $Parameters -}}
+
+{{- end -}} {{/* if $slides */}}

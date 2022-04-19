@@ -119,7 +119,7 @@
     
       {{- partial "plugin-lightbox/link-content/video.html" $parameters -}}
       
-    {{- else if $PhotoWidth -}}
+    {{- else if (and $PhotoWidth (gt 0 $PhotoWidth)) -}}
     
     {{- $parameters := dict "Page" .Page "Src" $Src -}}
     {{- with .Alt -}}
